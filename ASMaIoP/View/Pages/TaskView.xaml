@@ -1,0 +1,40 @@
+﻿<Page x:Class="ASMaIoP.View.Pages.TaskView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:ASMaIoP.View.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="1200"
+      Title="TaskView">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="10*"/>
+        </Grid.RowDefinitions>
+        <Button x:Name="CreateTaskButton"
+                Click="CreateTaskButton_Click"
+                Style="{DynamicResource ButtonLeftPanel}"
+                Content="Создать задачу"
+                Background="LightGreen"
+                Height="30"
+                Margin="5 5 15 5"
+                HorizontalAlignment="Right"
+                Width="100"/>
+        <DataGrid Grid.Row="1"
+                  IsReadOnly="True"
+                  AutoGenerateColumns="False"
+                  MouseDoubleClick="TaskDataGrid_MouseDoubleClick"
+                  ItemsSource="{Binding}"
+                  x:Name="TaskDataGrid">
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="90" Binding="{Binding Path=TasksStatus}" CanUserResize="False" Header="Срочность"/>
+                <DataGridTextColumn Width="130" Binding="{Binding Path=TaskTitle}" CanUserResize="False" Header="Название"/>
+                <DataGridTextColumn Width="70" Binding="{Binding Path=TasksState}" CanUserResize="False" Header="Статус"/>
+                <DataGridTextColumn CanUserResize="False" Binding="{Binding Path=LastDay}" Header="Крайний срок"/>
+                <DataGridTextColumn Width="150" CanUserResize="False" Binding="{Binding Path=OwnerFullName}" Header="Создатель"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>

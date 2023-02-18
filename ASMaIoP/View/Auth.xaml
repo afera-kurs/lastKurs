@@ -1,0 +1,87 @@
+﻿<Window x:Class="ASMaIoP.View.Auth"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ASMaIoP.View"
+        Background="#01000000"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="NoResize"
+        Window.Loaded ="Window_Loaded"
+        FontSize="20"
+        WindowStartupLocation="CenterScreen"
+        mc:Ignorable="d"
+        Height="400" Width="400">
+    <Border>
+        <Grid 
+        HorizontalAlignment="Left"
+        VerticalAlignment="Top" 
+        Height="400" 
+        Width="400">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="101*"/>
+                <ColumnDefinition Width="99*"/>
+            </Grid.ColumnDefinitions>
+            <Border 
+            CornerRadius="30 30 30 30"
+            Background="WhiteSmoke"
+            MouseLeftButtonDown ="Border_MouseLeftButtonDown"
+            Grid.ColumnSpan="2"/>
+            <StackPanel 
+            Width="300"
+            Orientation="Vertical"
+            Margin="50,86,0,24" 
+            HorizontalAlignment="Left" Grid.ColumnSpan="2">
+                <TextBlock
+                Text="Логин:" 
+                Margin="10,5,10,0"
+                />
+                <TextBox Style="{DynamicResource TextBoxRound}"  
+                Height="50"
+                x:Name="Login"                         
+                Margin="10,5,10,0"       
+                Background="Transparent" VerticalContentAlignment="Center"
+                Padding="10,0">
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="15"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+                <TextBlock
+                Text="Пароль:" 
+                Margin="10,5,10,0"/>
+                <PasswordBox Height="50"   
+                x:Name="Password"
+                Style="{DynamicResource PasswordBoxRnd}"            
+                Margin="10,5,10,0"  
+                Background="Transparent" VerticalContentAlignment="Center"
+                Padding="10,0"/>
+                <Button x:Name="LoginButton"
+                Click="LoginButton_Click"
+                Style="{DynamicResource ButtonLeftPanel}" 
+                Margin="20 10 10 10" 
+                Height="40"
+                Width="100"
+                HorizontalAlignment="Left"
+                Background="#359EF4"
+                Content="Войти">
+                </Button>
+            </StackPanel>
+            <Button x:Name="ExitButton"
+                Style="{DynamicResource ButtonLeftPanel}" 
+                Margin="158,10,0,360"
+                Background="Red"
+                Width="30" 
+                Height="30"
+                HorizontalAlignment="Left"
+                Content="x" 
+                Click="ExitButton_Click"
+                VerticalContentAlignment="Center"
+                HorizontalContentAlignment="Center"
+                Grid.Column="1">
+            </Button>
+        </Grid>
+    </Border>
+</Window>
