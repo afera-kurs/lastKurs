@@ -36,14 +36,16 @@ namespace ASMaIoP.View
         }
         public Auth()
         {
-            vm = new AuthVM();
             instance = this;
             InitializeComponent();
+            vm = new AuthVM(AnimationGrid);
+            el.Position = new TimeSpan(0, 0, 1);
+            el.Play();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            BlurEffect effect = new BlurEffect(this) { BlurOpacity = 70 };
+            //BlurEffect effect = new BlurEffect(this) { BlurOpacity = 70 };
         }
 
         private void Border_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -53,6 +55,9 @@ namespace ASMaIoP.View
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
+            AuthPanel.Visibility = Visibility.Collapsed;
+            AnimationGrid.IsEnabled = true;
+            AnimationGrid.Visibility = Visibility.Visible;
             vm.Auth(Login.Text, Password.Password);
         }
 
@@ -60,6 +65,14 @@ namespace ASMaIoP.View
         {
             System.Windows.Application.Current.Shutdown();
         }
+        private void movieLoader_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            el.Position = new TimeSpan(0, 0, 1);
+            el.Play();
+        }
 
+        private void Window_Closed(object sender, EventArgs e)
+        {
+        }
     }
 }

@@ -12,6 +12,7 @@ using Windows.ApplicationModel.Email;
 using System.IO;
 using System.Windows.Threading;
 using System.Drawing;
+using System.Threading;
 
 namespace ASMaIoP.ViewModel
 {
@@ -75,13 +76,13 @@ namespace ASMaIoP.ViewModel
 
         DispatcherTimer LiveTime;
 
+        Thread iconLoadThread;
+        object locker = new object();
         internal MainWindowVM(ProfileData profile)
         {
             fullname = $"{profile.name} {profile.surname}";
             this.profile = profile;
 
-            images = new ImageSystem();
-            PhotoEmloyee = ImageSystem.BitmapToImageSource(images.DownloadImage(profile.pictureUrl));
             RoleTitle = profile.roleTitle;
 
             LiveTime  = new DispatcherTimer();
@@ -93,6 +94,24 @@ namespace ASMaIoP.ViewModel
         }
 
         DatabaseInterface db;
+
+        public void loadImage(Window wnd)
+        {
+            iconLoadThread = new Thread(() =>
+            {
+                lock (locker)
+                {
+                    images = new ImageSystem();
+                    Bitmap bp2 = images.DownloadImage(profile.pictureUrl);
+                    wnd.Dispatcher.Invoke(() =>
+                    {
+                        var bp = ImageSystem.BitmapToImageSource(bp2);
+                        PhotoEmloyee = bp;
+                    });
+                }
+            });
+            iconLoadThread.Start();
+        }
 
         void timer_Tick(object sender, EventArgs e)
         {

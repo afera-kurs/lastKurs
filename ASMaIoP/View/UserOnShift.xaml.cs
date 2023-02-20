@@ -11,8 +11,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
+using System.Threading;
 using ASMaIoP.Model;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace ASMaIoP.View
 {
@@ -21,7 +23,8 @@ namespace ASMaIoP.View
     /// </summary>
     public partial class UserOnShift : Window
     {
-
+        List<EmployeeData> emps;
+        List<UserInfo> users;
         public struct UserInfo
         {
             public string Name { get; set; }
@@ -31,22 +34,34 @@ namespace ASMaIoP.View
 
         DatabaseInterface database;
 
+        Thread thread;
+
         public UserOnShift()
         {
+
             InitializeComponent();
-            database = DatabaseFactory.CreateInterface();
-            List<EmployeeData> emps = new List<EmployeeData>();
-            database.LoadUserOnWorkShift(emps, 0);
+            emps = new List<EmployeeData>();
+            users = new List<UserInfo>();  
+        }
 
-            List<UserInfo> users = new List<UserInfo>();  
-
-            foreach(EmployeeData emp in emps)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            thread = new Thread(() =>
             {
-                users.Add(new UserInfo { Name = emp.name, Surname = emp.surname, RoleTitle = emp.roleTitle });
-            }
+                database = DatabaseFactory.CreateInterface();
+                database.LoadUserOnWorkShift(emps, 0);
+                foreach (EmployeeData emp in emps)
+                {
+                    users.Add(new UserInfo { Name = emp.name, Surname = emp.surname, RoleTitle = emp.roleTitle });
+                }
+                EmployeeDataGrid.Dispatcher.Invoke(() =>
+                {
+                    EmployeeDataGrid.ItemsSource = null;
+                    EmployeeDataGrid.ItemsSource = users;
+                });
+            });
 
-            EmployeeDataGrid.ItemsSource = null;
-            EmployeeDataGrid.ItemsSource = users;
+            thread.Start();
         }
     }
 }

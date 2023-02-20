@@ -145,6 +145,9 @@
     <Compile Include="View\SelectExcucant.xaml.cs">
       <DependentUpon>SelectExcucant.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\StyleAndCustElement\Loading.xaml.cs">
+      <DependentUpon>Loading.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\TaskCreate.xaml.cs">
       <DependentUpon>TaskCreate.xaml</DependentUpon>
     </Compile>
@@ -159,7 +162,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\cmbStyle.xaml">
+    <Page Include="View\StyleAndCustElement\cmbStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -245,7 +248,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\Style.xaml">
+    <Page Include="View\StyleAndCustElement\Loading.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\StyleAndCustElement\Style.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -275,6 +282,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -351,8 +359,13 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\CreateEmploye.docx" />
+    <None Include="Resources\DismissedEmployee.docx" />
     <None Include="View\Resource\default.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="View\Resource\giphy.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -6,6 +6,7 @@
       xmlns:local="clr-namespace:ASMaIoP.View.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="1200"
+      Loaded="Page_Loaded"
       Title="TaskView">
 
     <Grid>

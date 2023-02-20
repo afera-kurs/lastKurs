@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ASMaIoP.View.Pages"
         ResizeMode="NoResize"
+        Loaded="Window_Loaded"
         mc:Ignorable="d"
         Title="EmployeeInformation" Height="390" Width="700">
     <Grid>
@@ -73,6 +74,7 @@
             <StackPanel Grid.Row="1"
                         Margin="5">
                 <Button Grid.Column="1" 
+                        Visibility="Collapsed"
                         x:Name="Delete"
                         Click="Delete_Click"
                 Background="#c4302b"

@@ -39,13 +39,17 @@ namespace ASMaIoP.Model
 
         public void Replace(string oldString, string newString)
         {
-            Regex regexText = new Regex($"\\({oldString}\\)");
-            docText = regexText.Replace(docText, newString);
+            Regex regexText = new Regex($"{oldString}");
+            docText = regexText.Replace(docText, newString, 1);
         }
 
         public void Save(string path)
         {
             using (StreamWriter sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
+            {
+                sw.Write(docText);
+            }
+            using (StreamWriter sw = new StreamWriter("test2.docx"))
             {
                 sw.Write(docText);
             }

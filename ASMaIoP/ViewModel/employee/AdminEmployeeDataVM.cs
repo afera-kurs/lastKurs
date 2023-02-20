@@ -42,10 +42,29 @@ namespace ASMaIoP.ViewModel
             dataGridData = new List<EmployeeDataColumn>();
         }
 
-        void UpdateData()
+        public void UpdateData()
         {
             employees.Clear();
             databaseInterface.LoadEmployeeData(employees);
+
+
+            dataGridData.Clear();
+
+            foreach (EmployeeData data in employees)
+            {
+                EmployeeDataColumn employeeDataColumn = new EmployeeDataColumn();
+
+                employeeDataColumn.Id = data.EmployeeId;
+
+                employeeDataColumn.Address = data.address;
+                employeeDataColumn.PhoneNumber = data.phoneNumber;
+                employeeDataColumn.Name = data.name;
+                employeeDataColumn.RoleTitle = data.roleTitle;
+                employeeDataColumn.Surname = data.surname;
+                employeeDataColumn.Status = data.IsDissmissed ? "Работает" : "Уволен";
+
+                dataGridData.Add(employeeDataColumn);
+            }
         }
 
         List<EmployeeDataColumn> dataGridData;
@@ -81,26 +100,6 @@ namespace ASMaIoP.ViewModel
 
         public void LoadDataToDataGrid(UpdateEmployeeDataGrid datagridUpdateLayout)
         {
-            UpdateData();
-
-            dataGridData.Clear();
-
-            foreach (EmployeeData data in employees)
-            {
-                EmployeeDataColumn employeeDataColumn = new EmployeeDataColumn();
-
-                employeeDataColumn.Id = data.EmployeeId;
-
-                employeeDataColumn.Address = data.address;
-                employeeDataColumn.PhoneNumber = data.phoneNumber;
-                employeeDataColumn.Name = data.name;
-                employeeDataColumn.RoleTitle = data.roleTitle;
-                employeeDataColumn.Surname = data.surname;
-                employeeDataColumn.Status = data.IsDissmissed ? "Работает" : "Уволен";
-
-                dataGridData.Add(employeeDataColumn);
-            }
-
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DataGridData)));
             datagridUpdateLayout(dataGridData);
         }

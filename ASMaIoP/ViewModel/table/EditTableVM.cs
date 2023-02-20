@@ -58,7 +58,7 @@ namespace ASMaIoP.ViewModel
             {        
                 databaseInterface.UpdateTable(tableID, mark);
             }
-            databaseInterface.  New(DateTime.Now.Date, $"Утсановил отметку {mark}, в табеле для работника {employeeName} за {DateString}" , null);
+            //databaseInterface.HistroyCreateNew(DateTime.Now.Date, $"Утсановил отметку {mark}, в табеле для работника {employeeName} за {DateString}" , null);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

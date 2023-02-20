@@ -21,6 +21,7 @@ using ASMaIoP.View;
 using CefSharp.DevTools.Profiler;
 using ASMaIoP.View.Pages;
 using Microsoft.Win32;
+using System.Threading;
 
 namespace ASMaIoP
 {
@@ -35,6 +36,7 @@ namespace ASMaIoP
         DatabaseInterface db;
         MainWindowVM vm;
         bool FlagActrion = false;
+        Thread pageLodingThread;
 
         ProfileData prof;
 
@@ -45,6 +47,9 @@ namespace ASMaIoP
             vm = new MainWindowVM(profile);
             DataContext = vm;
             db = DatabaseFactory.CreateInterface();
+
+            el.Position = new TimeSpan(0, 0, 1);
+            el.Play();
 
             SwitchShiftStatus(profile.isShiftStarted);
         }
@@ -58,6 +63,8 @@ namespace ASMaIoP
             RolePanel.Visibility =
                 Guard.RoleControlsPanel ?
                 Visibility.Visible : Visibility.Collapsed;
+
+            vm.loadImage(this);
 
         }
         //Правая верхняя кнопочка для выхода из аккаунта
@@ -84,19 +91,48 @@ namespace ASMaIoP
 
         private void AdminPanel_Click(object sender, RoutedEventArgs e)
         {
-            Page.Content = new View.Pages.AdminEmployeeData(prof);
+            AnimationGrid.IsEnabled = true;
+            AnimationGrid.Visibility = Visibility.Visible;
+
+            Page.Dispatcher.Invoke(() =>
+            {
+                Page.Content = new View.Pages.AdminEmployeeData(prof, AnimationGrid);
+                AnimationGrid.IsEnabled = false;
+                AnimationGrid.Visibility = Visibility.Collapsed;
+            });
         }
 
         private void RolePanel_Click(object sender, RoutedEventArgs e)
         {
-            Page.Content = new View.Pages.JobsList();
+            AnimationGrid.IsEnabled = true;
+            AnimationGrid.Visibility = Visibility.Visible;
+
+            pageLodingThread = new Thread(() =>
+            {
+                Page.Dispatcher.Invoke(() =>
+                {
+                    var some = new View.Pages.JobsList(AnimationGrid);
+                    Page.Content = some;
+                });
+            });
+            pageLodingThread.SetApartmentState(ApartmentState.STA);
+            pageLodingThread.IsBackground = true;
+            pageLodingThread.Start();
         }
 
         private void Button4_Click(object sender, RoutedEventArgs e)
         {
-            Page.Content = new View.Pages.Table(prof);
-            Page.HorizontalContentAlignment = HorizontalAlignment.Left;
-            Page.VerticalContentAlignment = VerticalAlignment.Top;
+            AnimationGrid.IsEnabled = true;
+            AnimationGrid.Visibility = Visibility.Visible;
+
+            Page.Dispatcher.Invoke(() =>
+            {
+                Page.Content = new View.Pages.Table(prof, AnimationGrid);
+                Page.HorizontalContentAlignment = HorizontalAlignment.Left;
+                Page.VerticalContentAlignment = VerticalAlignment.Top;
+                AnimationGrid.IsEnabled = false;
+                AnimationGrid.Visibility = Visibility.Collapsed;
+            });
         }
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -106,7 +142,8 @@ namespace ASMaIoP
 
         private void Button3_Click(object sender, RoutedEventArgs e)
         {
-            Page.Content = new View.Pages.History(prof);
+            Page.Content = new View.Pages.History(prof, AnimationGrid);
+
         }
 
         private void StartWork_Click(object sender, RoutedEventArgs e)
@@ -142,14 +179,27 @@ namespace ASMaIoP
 
         private void Button2_Click(object sender, RoutedEventArgs e)
         {
-            Page.Content = new View.Pages.TaskView(prof);
+            AnimationGrid.IsEnabled = true;
+            AnimationGrid.Visibility = Visibility.Visible;
+
+            Page.Dispatcher.Invoke(() =>
+            {
+                Page.Content = new View.Pages.TaskView(prof, AnimationGrid);
+            });
+
         }
 
         private void test_Click(object sender, RoutedEventArgs e)
         {
-            DocumentHelper helper = new DocumentHelper(Properties.Resources.CreateEmploye);
-            helper.Replace("FIO", "123");
-            helper.Save("tmp.docx");
+            //DocumentHelper helper = new DocumentHelper(Properties.Resources.CreateEmploye);
+            //helper.Replace("FIO", "123");
+            //helper.Save("tmp.docx");
+            
+        }
+        private void movieLoader_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            el.Position = new TimeSpan(0, 0, 1);
+            el.Play();
         }
     }
 

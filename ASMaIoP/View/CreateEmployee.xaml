@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ASMaIoP.View"
         mc:Ignorable="d"
-        Title="CreateEmployee" Height="410" Width="430"
+        Title="CreateEmployee" Height="440" Width="430"
         ResizeMode="NoResize">
     <Grid>
         <Grid x:Name="Physical"

@@ -30,7 +30,7 @@ namespace ASMaIoP.ViewModel
             databaseInterface = DatabaseFactory.CreateInterface();
         }
 
-        private void UpdateRoles()
+        public void UpdateRoles()
         {
             try
             {
@@ -44,7 +44,6 @@ namespace ASMaIoP.ViewModel
 
         public void LoadDataToDataGrid(UpdateRolesDelegate del)
         {
-            UpdateRoles();
             List<RoleColumn> mem = new List<RoleColumn>();
 
             foreach(RoleData data in roles)
@@ -59,6 +58,8 @@ namespace ASMaIoP.ViewModel
             }
 
             del(mem);
+            
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

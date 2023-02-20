@@ -1,25 +1,21 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\e36205\\Desktop\\lastKurs-main\\ASMaIoP\\ASMaIoP.csproj": {}
+    "C:\\Users\\caratovchanin\\source\\repos\\lastKurs\\ASMaIoP\\ASMaIoP.csproj": {}
   },
   "projects": {
-    "C:\\Users\\e36205\\Desktop\\lastKurs-main\\ASMaIoP\\ASMaIoP.csproj": {
+    "C:\\Users\\caratovchanin\\source\\repos\\lastKurs\\ASMaIoP\\ASMaIoP.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\e36205\\Desktop\\lastKurs-main\\ASMaIoP\\ASMaIoP.csproj",
+        "projectUniqueName": "C:\\Users\\caratovchanin\\source\\repos\\lastKurs\\ASMaIoP\\ASMaIoP.csproj",
         "projectName": "ASMaIoP",
-        "projectPath": "C:\\Users\\e36205\\Desktop\\lastKurs-main\\ASMaIoP\\ASMaIoP.csproj",
-        "packagesPath": "C:\\Users\\e36205\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\e36205\\Desktop\\lastKurs-main\\ASMaIoP\\obj\\",
+        "projectPath": "C:\\Users\\caratovchanin\\source\\repos\\lastKurs\\ASMaIoP\\ASMaIoP.csproj",
+        "packagesPath": "C:\\Users\\caratovchanin\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\caratovchanin\\source\\repos\\lastKurs\\ASMaIoP\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\e36205\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\caratovchanin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

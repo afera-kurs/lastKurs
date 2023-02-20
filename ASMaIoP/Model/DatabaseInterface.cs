@@ -26,6 +26,8 @@ namespace ASMaIoP.Model
         public bool isShiftStarted;
         public bool isDismissed;
 
+        public DateTime employeeWordDay;
+
         public int accessLevel;
         public string cardId;
     }
@@ -51,7 +53,7 @@ namespace ASMaIoP.Model
         public int roleId;
         public string roleTitle;
 
-        DateTime firstDay;
+        public DateTime firstDay;
     }
 
     internal struct RoleData
@@ -183,14 +185,15 @@ namespace ASMaIoP.Model
             connection = new DatabaseConnectionWrapper(connectionString);
         }
 
-        public ProfileData GetEmployeeData(int nId)
+        public ProfileData GetEmployeeData(int nId, bool openConnection = true)
         {
             ProfileData data = new ProfileData();
             data.id = nId;
+            if(openConnection)
             connection.Open();
 
             MySqlCommand cmd = new MySqlCommand(
-                $"SELECT employee.employee_image_url, people.people_name, people.people_surname, role.role_title, role.role_lvl, employee.employee_work_shift, employee_status, cards_ID, people.people_patName FROM employee INNER JOIN people ON employee.employee_people_ID=people.people_ID INNER JOIN role ON employee.employee_role_ID=role.role_ID INNER JOIN cards ON cards.cards_employee_ID = employee.employee_ID WHERE employee.employee_ID={nId}"
+                $"SELECT employee.employee_image_url, people.people_name, people.people_surname, role.role_title, role.role_lvl, employee.employee_work_shift, employee_status, cards_ID, people.people_patName, employee_work_day FROM employee INNER JOIN people ON employee.employee_people_ID=people.people_ID INNER JOIN role ON employee.employee_role_ID=role.role_ID INNER JOIN cards ON cards.cards_employee_ID = employee.employee_ID WHERE employee.employee_ID={nId}"
             , connection.SqlConnection);
 
             MySqlDataReader reader = cmd.ExecuteReader();
@@ -209,9 +212,11 @@ namespace ASMaIoP.Model
                 data.isDismissed = reader.GetBoolean(6);
                 data.cardId = reader[7].ToString();
                 data.patName = reader[8].ToString();
+                data.employeeWordDay = reader.GetDateTime(9);
             }
 
             reader.Close();
+            if(openConnection)
             connection.Close();
 
             return data;
@@ -449,7 +454,7 @@ namespace ASMaIoP.Model
         {
             connection.Open();
 
-            MySqlCommand cmd = new MySqlCommand($"SELECT employee_ID, employee_people_ID, employee_role_ID, people_name, people_surname, people_address, people_phone_number, role_title, employee_status, cards_INDEX, cards_ID, people_patName FROM employee INNER JOIN people ON employee_people_ID=people_ID INNER JOIN role ON employee_role_ID=role.role_ID INNER JOIN cards ON cards_employee_ID=employee_ID", connection.SqlConnection);
+            MySqlCommand cmd = new MySqlCommand($"SELECT employee_ID, employee_people_ID, employee_role_ID, people_name, people_surname, people_address, people_phone_number, role_title, employee_status, cards_INDEX, cards_ID, people_patName, employee_work_day FROM employee INNER JOIN people ON employee_people_ID=people_ID INNER JOIN role ON employee_role_ID=role.role_ID INNER JOIN cards ON cards_employee_ID=employee_ID", connection.SqlConnection);
 
             MySqlDataReader reader = cmd.ExecuteReader();
             
@@ -472,6 +477,8 @@ namespace ASMaIoP.Model
                 data.cardIndex = reader[9].ToString();
                 data.cardId = reader[10].ToString();
                 data.patName = reader[11].ToString();
+
+                data.firstDay = reader.GetDateTime(12);
 
                 employees.Add(data);
             }
@@ -521,8 +528,8 @@ namespace ASMaIoP.Model
             
             }
 
-            int docId = DocsCreate();
-            HistroyCreateNew()
+            //int docId = DocsCreate();
+            //HistroyCreateNew();
 
             connection.Close();
 
@@ -653,7 +660,7 @@ namespace ASMaIoP.Model
                 connection.Close();
                 return Id;
             }
-            catch
+            catch(Exception ex)
             {
                 throw new Exception("Ошибка авторизации");
             }
@@ -759,7 +766,7 @@ namespace ASMaIoP.Model
             connection.Close();
         }
 
-        public void HistroyCreateNew(DateTime dt, string desc, int? docsId, bool openConnection = true)
+        public void HistroyCreateNew(DateTime dt, string desc, int? docsId, int ownerID, int emplID, bool openConnection = true)
         {
             if(openConnection)
                 connection.Open();
@@ -774,8 +781,8 @@ namespace ASMaIoP.Model
                 docsIdPlaceHolder = $"{docsId.Value}";
             }
 
-            string sql = $"INSERT history(histroy_date, history_description, history_docs_ID) VALUES('{FormatDateToSql(dt)}', '{desc}', {docsIdPlaceHolder})";
-            MySqlCommand cmd = new MySqlCommand(sql, connection);
+            string sql = $"INSERT history(histroy_date, history_description, history_docs_ID, histroy_owner_ID, history_employe_ID) VALUES('{FormatDateToSql(dt)}', '{desc}', {docsIdPlaceHolder}, {ownerID}, {emplID})";
+            MySqlCommand cmd = new MySqlCommand(sql, connection.SqlConnection);
             
             cmd.ExecuteNonQuery();
 
@@ -783,19 +790,88 @@ namespace ASMaIoP.Model
                 connection.Close();
         }
 
-        public int DocsCreate(int docsType, int docsOwnerId, int docsEmployeeId, DateTime firstDay, DateTime secondDay, string descFirst, string descSecond, bool openConnection = true)
+        public struct DocInformation
+        {
+            public int id;
+            public int type;
+            public DateTime firstDay;
+            public DateTime secondDay;
+            public string descFirst;
+            public string descSecond;
+        }
+
+        public struct HistroyInformation
+        {
+            public int id;
+            public DateTime histroyDate;
+            public string histroyDesc;
+            public int? docs_ID;
+            public int owner_ID;
+            public int empl_ID;
+            public DocInformation information;
+        }
+
+        public void LoadDocs(List<HistroyInformation> histroyFull, int? target = null)
+        {
+
+            MySqlCommand cmd;
+            if (target == null)
+            {
+                cmd = new MySqlCommand("SELECT history_ID, history_date, history_description, history_docs_ID, history_owner_ID, history_employe_ID, docs_type, docs_firstDay, docs_secondDay, docs_descFirst, docs_descSecond FROM history LEFT JOIN docs ON history_docs_ID=docs_ID", connection.SqlConnection);
+            }
+            else
+            {
+                cmd = new MySqlCommand($"SELECT history_ID, history_date, history_description, history_docs_ID, history_owner_ID, history_employe_ID, docs_type, docs_firstDay, docs_secondDay, docs_descFirst, docs_descSecond FROM history LEFT JOIN docs ON history_docs_ID=docs_ID WHERE history_employe_ID={target}", connection.SqlConnection);
+            }
+            DataTable table = new DataTable();
+
+            MySqlDataAdapter adapter = new MySqlDataAdapter();
+            adapter.SelectCommand = cmd;
+            adapter.Fill(table);
+
+            foreach (DataRow row in table.Rows)
+            {
+                HistroyInformation inf = new HistroyInformation();
+                inf.id = int.Parse(row.ItemArray[0].ToString());
+                inf.histroyDate = DateTime.Parse(row.ItemArray[1].ToString());
+                inf.histroyDesc = row.ItemArray[2].ToString();
+                
+                if(row.ItemArray[3] != DBNull.Value)
+                {
+                    inf.docs_ID = int.Parse(row.ItemArray[3].ToString());
+                    inf.information.id = inf.docs_ID.Value;
+                    inf.information.type = int.Parse(row.ItemArray[6].ToString());
+                    inf.information.firstDay = DateTime.Parse(row.ItemArray[7].ToString());
+                    inf.information.secondDay = DateTime.Parse(row.ItemArray[8].ToString());
+                    inf.information.descFirst = (row.ItemArray[9].ToString());
+                    inf.information.descSecond = (row.ItemArray[10].ToString());
+                }
+                else
+                {
+                    inf.docs_ID = null;
+                }
+    
+                inf.owner_ID = int.Parse(row.ItemArray[4].ToString());
+                inf.empl_ID = int.Parse(row.ItemArray[5].ToString());
+                histroyFull.Add(inf);
+            }
+
+            
+        }
+
+        public int DocsCreate(int docsType, DateTime firstDay, DateTime secondDay, string descFirst, string descSecond, bool openConnection = true)
         {
             if (openConnection)
                 connection.Open();
 
-            string sql = $"INSERT docs(docs_type, docs_owner_ID, docs_employe_ID, docs_firstDay, docs_secondDay) VALUES({docsType},{docsOwnerId}, {docsEmployeeId}, '{FormatDateToSql(firstDay)}', '{FormatDateToSql(secondDay)}', '{descFirst}', '{descSecond}')";
+            string sql = $"INSERT docs(docs_type, docs_firstDay, docs_secondDay) VALUES({docsType}, '{FormatDateToSql(firstDay)}', '{FormatDateToSql(secondDay)}', '{descFirst}', '{descSecond}')";
 
-            MySqlCommand cmd = new MySqlCommand(sql, connection);
+            MySqlCommand cmd = new MySqlCommand(sql, connection.SqlConnection);
 
             cmd.ExecuteNonQuery();
 
             cmd = new MySqlCommand("SELECT LAST_INSERT_ID();");
-            string id = cmd.ExecuteScalar();
+            string id = cmd.ExecuteScalar().ToString();
 
             if (openConnection)
                 connection.Close();
@@ -1287,7 +1363,7 @@ namespace ASMaIoP.Model
             }
 
 
-            HistoryCreate(owner, employeeId.ToString(), employeeName, DateTime.Now, historyMessage, false);
+            //HistoryCreate(owner, employeeId.ToString(), employeeName, DateTime.Now, historyMessage, false);
             connection.Close();
         }
         public void LoadTasksForTheUser(int employeeId, List<Task> res)

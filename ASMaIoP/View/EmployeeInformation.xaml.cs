@@ -15,8 +15,7 @@ using System.Windows.Shapes;
 using ASMaIoP.ViewModel;
 using ASMaIoP.View;
 using ASMaIoP.Model;
-
-using ASMaIoP.Model;
+using System.Threading;
 
 namespace ASMaIoP.View.Pages
 {
@@ -29,16 +28,15 @@ namespace ASMaIoP.View.Pages
         EmployeeInformationVM vm;
         ProfileData prof;
         EmployeeData data;
+        Thread thread;
+        Mutex locker = new Mutex();
         internal EmployeeInformation(ProfileData prof, EmployeeData data)
         {
             this.data = data;
             InitializeComponent();
-            vm = new EmployeeInformationVM(prof, data);
+            vm = new EmployeeInformationVM(prof, data, locker);
             DataContext = vm;
             this.prof = prof;
-            vm.BindRolesCombobox(roleComboBox);
-            Hire.Visibility = data.IsDissmissed ? Visibility.Collapsed : Visibility.Visible;
-            dissmissed.Visibility = data.IsDissmissed ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
@@ -116,6 +114,19 @@ namespace ASMaIoP.View.Pages
         void CardReceivedHandler(string CardId)
         {
             vm.UpdateCardId(CardId);
+        }
+
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            thread = new Thread(() =>
+            {
+                vm.UpdateViewModelData();
+                vm.BindRolesCombobox(roleComboBox);
+            });
+            thread.Start();
+            Hire.Visibility = data.IsDissmissed ? Visibility.Collapsed : Visibility.Visible;
+            dissmissed.Visibility = data.IsDissmissed ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }

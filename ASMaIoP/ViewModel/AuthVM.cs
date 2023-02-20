@@ -7,46 +7,75 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Media;
 using ASMaIoP.Model;
+using System.Windows.Controls;
+using System.Windows;
 
 namespace ASMaIoP.ViewModel
 {
     internal class AuthVM : INotifyPropertyChanged
     {
         DatabaseInterface db;
-        static Task AuthTask;
+        static Thread AuthTask;
+        object locker = new object();
         public void Auth(string login, string password)
         {
-            AuthTask = new Task(()=>
+            AuthTask = new Thread(()=>
             {
-                try
+                lock(locker)
                 {
-                    int Id = db.AuthorizeUser(login, password);
-                    ProfileData profile = db.GetEmployeeData(Id);
-
-                    Guard.AccesLevel = profile.accessLevel;
-
-                    ASMaIoP.View.Auth.Instance.Dispatcher.Invoke(() =>
+                    try
                     {
-                        ASMaIoP.MainWindow mainWindow = new MainWindow(profile);
-                        mainWindow.Show();
-                        ASMaIoP.View.Auth.Instance.Close();
-                    });
+                        int Id = db.AuthorizeUser(login, password);
+                        ProfileData profile = db.GetEmployeeData(Id);
 
-                }
-                catch (Exception ex)
-                {
-                    DataLog.Log.AddLog(new Event(ex.Message, EventPriority.Error));
-                    return;
+                        Guard.AccesLevel = profile.accessLevel;
+
+                        ASMaIoP.View.Auth.Instance.Dispatcher.Invoke(() =>
+                        {
+                            if(AnimationGrid != null)
+                            {
+                                AnimationGrid.IsEnabled = false;
+                                AnimationGrid.Visibility = Visibility.Collapsed;
+                            }
+                            ASMaIoP.MainWindow mainWindow = new MainWindow(profile);
+                            mainWindow.Show();
+                            ASMaIoP.View.Auth.Instance.Close();
+                        });
+
+                    }
+                    catch (Exception ex)
+                    {
+                        DataLog.Log.AddLog(new Event(ex.Message, EventPriority.Error));
+                        ASMaIoP.View.Auth.Instance.Dispatcher.Invoke(() =>
+                        {
+                            if (AnimationGrid != null)
+                            {
+                                AnimationGrid.IsEnabled = false;
+                                AnimationGrid.Visibility = Visibility.Collapsed;
+                            }
+
+                            ASMaIoP.View.Auth.Instance.AuthPanel.Visibility = Visibility.Visible;
+                        });
+
+                        return;
+                    }
                 }
             });
 
             AuthTask.Start();
         }
 
+        Grid AnimationGrid;
+
         public void DeviceInput(string cardID)
         {
-            AuthTask = new Task(() =>
+            AuthTask = new Thread(() =>
             {
+                ASMaIoP.View.Auth.Instance.Dispatcher.Invoke(() =>
+                {
+                    AnimationGrid.IsEnabled = true;
+                    AnimationGrid.Visibility = Visibility.Visible;
+                });
                 try
                 {
                     int Id = db.AuthorizeUser(cardID);
@@ -57,6 +86,8 @@ namespace ASMaIoP.ViewModel
                     ASMaIoP.View.Auth.Instance.Dispatcher.Invoke(() =>
                     {
                         ASMaIoP.MainWindow mainWindow = new MainWindow(profile);
+                        AnimationGrid.IsEnabled = false;
+                        AnimationGrid.Visibility = Visibility.Collapsed;
                         mainWindow.Show();
                         ASMaIoP.View.Auth.Instance.Close();
                     });
@@ -64,6 +95,11 @@ namespace ASMaIoP.ViewModel
                 }
                 catch (Exception ex)
                 {
+                    ASMaIoP.View.Auth.Instance.Dispatcher.Invoke(() =>
+                    {
+                        AnimationGrid.IsEnabled = false;
+                        AnimationGrid.Visibility = Visibility.Collapsed;
+                    });
                     DataLog.Log.AddLog(new Event(ex.Message, EventPriority.Error));
                     return;
                 }
@@ -72,8 +108,9 @@ namespace ASMaIoP.ViewModel
             AuthTask.Start();
         }
 
-        public AuthVM()
+        public AuthVM(Grid AnimationGrid)
         {
+            this.AnimationGrid = AnimationGrid;
             db = DatabaseFactory.CreateInterface();
             ArduinoAPI.cardReceivedHandler = DeviceInput;
         }

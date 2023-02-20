@@ -21,7 +21,7 @@ namespace ASMaIoP
             // инициализации системы оповещения
             GlobalNotification.Init();
             FTPClientFactory.SetupConnectionData("osp74.beget.tech", "osp74_eberc", "t&lmo9Sj");
-            DatabaseFactory.SetupConnectionString("server=192.168.25.23;port=33333;user=st_3_20_32;database=is_3_20_st32_KURS;password=61180056;");
+            DatabaseFactory.SetupConnectionString("server=chuc.caseum.ru;port=33333;user=st_3_20_32;database=is_3_20_st32_KURS;password=61180056;");
             if(!ArduinoAPI.UsePort("COM3"))
             {
                 

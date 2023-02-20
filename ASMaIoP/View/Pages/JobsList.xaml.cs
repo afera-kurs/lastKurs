@@ -25,16 +25,12 @@ namespace ASMaIoP.View.Pages
     public partial class JobsList : Page
     {
         JobsListVM vm;
+        Grid AnimationGrid;
 
-        public JobsList()
+        public JobsList(Grid AnimationGrid)
         {
+            this.AnimationGrid = AnimationGrid;
             InitializeComponent();
-            vm = new JobsListVM();
-            vm.LoadDataToDataGrid((roles) =>
-            {
-                JobsDataGrid.ItemsSource = null;
-                JobsDataGrid.ItemsSource = roles;
-            });
         }
 
         private void CreateJob_Click(object sender, RoutedEventArgs e)
@@ -56,11 +52,31 @@ namespace ASMaIoP.View.Pages
             job.ShowDialog();
         }
 
+        Task pageLoad = null;
+
         private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
+        {   
             CreateJob.Visibility =
-               Guard.RoleEditPanel
-               ? Visibility.Visible : Visibility.Collapsed;
+            Guard.RoleEditPanel
+            ? Visibility.Visible : Visibility.Collapsed;
+            pageLoad = Task.Factory.StartNew(() =>
+            {
+                vm = new JobsListVM();
+                vm.UpdateRoles();
+                
+                vm.LoadDataToDataGrid((roles) =>
+                {
+                    JobsDataGrid.Dispatcher.Invoke(() =>
+                    {
+                        JobsDataGrid.ItemsSource = null;
+                        JobsDataGrid.ItemsSource = roles;
+                        AnimationGrid.IsEnabled = false;
+                        AnimationGrid.Visibility = Visibility.Collapsed;
+                    });
+                });
+            });
         }
+
+        
     }
 }

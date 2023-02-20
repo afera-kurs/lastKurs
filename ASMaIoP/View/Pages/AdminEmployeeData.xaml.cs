@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using ASMaIoP.View;
 using ASMaIoP.ViewModel;
 using ASMaIoP.Model;
+using System.Threading;
 using static ASMaIoP.ViewModel.AdminEmployeeDataVM;
 
 namespace ASMaIoP.View.Pages
@@ -25,38 +26,45 @@ namespace ASMaIoP.View.Pages
     public partial class AdminEmployeeData : Page
     {
         AdminEmployeeDataVM vm;
-
-        Task loadDataGrid;
-        Action loadDataGridDelegate;
-
+        object locker = new object();
+        Thread loadDataGrid;
+        Thread loadDataPerosnal;
+        Grid loading;
         public ProfileData prof;
+        object locker2 = new object();
 
-        public AdminEmployeeData(ProfileData prof)
+        public AdminEmployeeData(ProfileData prof, Grid loading)
         {
             InitializeComponent();
+            this.loading = loading;
             vm = new AdminEmployeeDataVM(prof);
             DataContext = vm;
 
             this.prof = prof;
-
-            loadDataGridDelegate = () =>
-            {
-                EmployeeDataGrid.Dispatcher.Invoke(() =>
-                {
-                    vm.LoadDataToDataGrid((tabel) =>
-                    {
-                        EmployeeDataGrid.ItemsSource = null;
-                        EmployeeDataGrid.ItemsSource = tabel;
-                    });
-                });
-            };
-
-            UpdateData();
         }
 
         private void UpdateData()
         {
-            loadDataGrid = new Task(loadDataGridDelegate);
+            loading.IsEnabled = true;
+            loading.Visibility = Visibility.Visible;
+
+            loadDataGrid = new Thread(() =>
+            {
+                lock (locker)
+                {
+                    vm.UpdateData();
+                    EmployeeDataGrid.Dispatcher.Invoke(() =>
+                    {
+                        vm.LoadDataToDataGrid((tabel) =>
+                        {
+                            EmployeeDataGrid.ItemsSource = null;
+                            EmployeeDataGrid.ItemsSource = tabel;
+                            loading.Visibility = Visibility.Collapsed;
+                            loading.IsEnabled = false;
+                        });
+                    });
+                }
+            });
             loadDataGrid.Start();
         }
 
@@ -64,26 +72,23 @@ namespace ASMaIoP.View.Pages
         {
             CreateEmployee employee = new CreateEmployee(prof);
             employee.ShowDialog();
-            vm.LoadDataToDataGrid((tabel) =>
-            {
-                EmployeeDataGrid.ItemsSource = null;
-                EmployeeDataGrid.ItemsSource = tabel;
-            });
+            UpdateData();
         }
+        
 
         private void EmployeeDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            var row = ItemsControl.ContainerFromElement((DataGrid)sender,
-                                       e.OriginalSource as DependencyObject) as DataGridRow;
-
-            if (     !Guard.EmployeeEditPanel ) return;
+        { 
+            if (!Guard.EmployeeEditPanel ) return;
 
             var item = (EmployeeDataColumn)EmployeeDataGrid.SelectedItem;
-            ShowEmployeeInfoWindow(item);
-            vm.LoadDataToDataGrid((tabel) =>
+            Dispatcher.Invoke(() =>
             {
-                EmployeeDataGrid.ItemsSource = null;
-                EmployeeDataGrid.ItemsSource = tabel;
+                ShowEmployeeInfoWindow(item);
+                vm.LoadDataToDataGrid((tabel) =>
+                {
+                    EmployeeDataGrid.ItemsSource = null;
+                    EmployeeDataGrid.ItemsSource = tabel;
+                });
             });
         }
 
@@ -97,12 +102,13 @@ namespace ASMaIoP.View.Pages
             CreateNewUser.Visibility =
                 Guard.EmployeeEditPanel
                 ? Visibility.Visible : Visibility.Collapsed;
+            UpdateData();
         }
 
         private void ActiveUser_Click(object sender, RoutedEventArgs e)
         {
             UserOnShift userOnShift = new UserOnShift();
-            userOnShift.Show();
+            userOnShift.ShowDialog();
         }
     }
 }

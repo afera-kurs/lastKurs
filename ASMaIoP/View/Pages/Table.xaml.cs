@@ -14,12 +14,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ASMaIoP.Model;
-using ASMaIoP.ViewModel;
 using CefSharp;
 using System.IO;
 using System.Threading;
 using Windows.UI.Xaml.Controls;
-
+using CefSharp.Wpf;
+using CefSharp.DevTools.Profiler;
 
 namespace ASMaIoP.View.Pages
 {
@@ -31,28 +31,54 @@ namespace ASMaIoP.View.Pages
         TabelVM vm;
         EditTable editTable;
         Thread tabelLoad;
-
+        ProfileData profile;
         Mutex tabelLoadMutex;
+        System.Windows.Controls.Grid loading;
+        Thread thread;
 
         object locker = new object();
 
-        public Table(ProfileData profile)
+        public Table(ProfileData profile, System.Windows.Controls.Grid loading)
         {
+            this.loading = loading;
+            this.profile = profile;
             InitializeComponent();
-
-            DatePick.SelectedDateFormat = DatePickerFormat.Short;
             vm = new TabelVM(profile);
             DataContext = vm;   
-            if(profile.accessLevel < 3)
-            {
-                Browser.IsEnabled = false;
-            }
-            Browser.JavascriptMessageReceived += OnBrowserJavascriptMessageReceived;
-            tabelLoadMutex = new Mutex();
+
         }
+
+        ChromiumWebBrowser Browser;
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            if (profile.accessLevel < 3)
+            {
+                BrowserControl.IsEnabled = false;
+            }
+            //
+            tabelLoadMutex = new Mutex();
+
+            DatePick.SelectedDateFormat = DatePickerFormat.Short;
+
+            thread = new Thread(() =>
+            {
+                var settings = new CefSettings();
+                //CefSharpSettings.ConcurrentTaskExecution = true;
+                settings.CefCommandLineArgs.Add("disable-gpu-vsync"); //Disable GPU vsync
+                settings.CefCommandLineArgs.Add("disable-gpu");
+                settings.MultiThreadedMessageLoop = true;
+                if(Cef.IsShutdown)
+                    Cef.Initialize(settings);
+                Dispatcher.Invoke(() =>
+                {
+                    Browser = new ChromiumWebBrowser();
+                    BrowserControl.Content = Browser;
+                    Browser.JavascriptMessageReceived += OnBrowserJavascriptMessageReceived;
+                });
+            });
+            thread.Start();
+
         }
         private void OnBrowserJavascriptMessageReceived(object sender, JavascriptMessageReceivedEventArgs e)
         {
@@ -61,6 +87,7 @@ namespace ASMaIoP.View.Pages
                     var windowSelection = (string)e.Message;
                     editTable = new EditTable(windowSelection, vm.year, vm.month, () =>
                     {
+
                         UpdateTabel();
                     });
                     editTable.Show();
@@ -75,6 +102,9 @@ namespace ASMaIoP.View.Pages
 
         public void UpdateTabel()
         {
+            loading.Visibility = Visibility.Visible;
+            loading.IsEnabled = true;
+
             tabelLoad = new Thread(() =>
             {
                 lock(locker)
@@ -87,7 +117,12 @@ namespace ASMaIoP.View.Pages
 
                     formater = formater.Replace('\\', '/');
                 
-                    Browser.Dispatcher.Invoke(() => Browser.Load($"file://{formater}/tmp.html"));
+                    Browser.Dispatcher.Invoke(() =>
+                    {
+                        Browser.Load($"file://{formater}/tmp.html");
+                        loading.Visibility = Visibility.Collapsed;
+                        loading.IsEnabled = false;
+                    });
                 }
             });
 

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Security;
+using System.Threading;
 using System.Windows.Controls;
 
 namespace ASMaIoP.ViewModel
@@ -14,13 +15,10 @@ namespace ASMaIoP.ViewModel
     internal class EmployeeInformationVM : INotifyPropertyChanged
     {
         private string name;
-        private string edit_name;
         private string surname;
-        private string edit_surname;
         private string address;
-        private string edit_address;
         private string phone;
-        private string edit_phone;
+
         private string roleTitle;
         private string cardId;
 
@@ -121,9 +119,11 @@ namespace ASMaIoP.ViewModel
 
         EmployeeData Data;
         ProfileData prof;
+        Mutex locker;
 
-        internal EmployeeInformationVM(ProfileData prof, EmployeeData data)
+        internal EmployeeInformationVM(ProfileData prof, EmployeeData data, Mutex locker)
         {
+            this.locker = locker;
             this.prof = prof;
             Data = data;
             Name = data.name;
@@ -134,28 +134,12 @@ namespace ASMaIoP.ViewModel
             CardId = data.cardId;
 
             databaseInterface = DatabaseFactory.CreateInterface();
-            UpdateViewModelData();
         }
 
         List<RoleData> roles;
-
+        DataTable dt;
         public void BindRolesCombobox(ComboBox comboBox)
         {
-            DataTable dt = new DataTable();
-            dt.Columns.Add("roleTitle");
-            dt.Columns.Add("roleId");
-            dt.Columns.Add("roleLevel");
-
-            foreach (RoleData role in roles)
-            {
-                DataRow dr = dt.NewRow();
-                dr["roleTitle"] = role.title;
-                dr["roleId"] = role.id;
-                dr["roleLevel"] = role.level;
-
-                dt.Rows.Add(dr);
-            }
-
             comboBox.Dispatcher.Invoke(() =>
             {
                 comboBox.DataContext = dt;
@@ -171,7 +155,7 @@ namespace ASMaIoP.ViewModel
             {
                 if(RoleId != Data.roleId)
                 {
-                    databaseInterface.HistoryCreate(prof.id.ToString(), Data.EmployeeId.ToString(), Name, DateTime.Now, $"Переведен с должности {Data.roleTitle} на {NewRoleTitle}");
+                    //databaseInterface.HistoryCreate(prof.id.ToString(), Data.EmployeeId.ToString(), Name, DateTime.Now, $"Переведен с должности {Data.roleTitle} на {NewRoleTitle}");
                 }
 
                 databaseInterface.EditEmploy(Data.EmployeeId, Name, Surname, Address, Phone, RoleId, CardId);
@@ -202,6 +186,20 @@ namespace ASMaIoP.ViewModel
             {
                 roles = new List<RoleData>();
                 databaseInterface.GetRolesData(roles);
+                dt = new DataTable();
+                dt.Columns.Add("roleTitle");
+                dt.Columns.Add("roleId");
+                dt.Columns.Add("roleLevel");
+
+                foreach (RoleData role in roles)
+                {
+                    DataRow dr = dt.NewRow();
+                    dr["roleTitle"] = role.title;
+                    dr["roleId"] = role.id;
+                    dr["roleLevel"] = role.level;
+
+                    dt.Rows.Add(dr);
+                }
             }
             catch (Exception ex)
             {

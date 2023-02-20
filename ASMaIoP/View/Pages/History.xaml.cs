@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ASMaIoP.Model;
 using ASMaIoP.ViewModel;
+using System.Threading;
 
 namespace ASMaIoP.View.Pages
 {
@@ -23,15 +24,94 @@ namespace ASMaIoP.View.Pages
     public partial class History : Page
     {
         HistoryVM vm;
-
-        public History(ProfileData profile)
+        Grid loading;
+        Thread loadThread;
+        Thread loadDocs;
+        public History(ProfileData profile, Grid loading)
         {
             InitializeComponent();
             vm = new HistoryVM(profile);
-            vm.LoadData();
+            this.loading = loading;
+        }
 
-            HistoryDataGrid.ItemsSource = null;
-            HistoryDataGrid.ItemsSource = vm.GetData();
+        private void HistoryDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if(HistoryDataGrid.SelectedItem != null)
+            {
+                var item = (HistoryVM.HistoryRow)HistoryDataGrid.SelectedItem;
+                if(item.DocsID != null)
+                {
+                    loadDocs = new Thread(() =>
+                    {
+                        DocumentHelper helper = null;
+                        switch (item.doc.type)
+                        {
+                            case 0:
+                                {
+                                    helper = new DocumentHelper(Properties.Resources.DismissedEmployee);
+                                    helper.Replace("нумерок", item.doc.id.ToString());
+                                    helper.Replace("блинбдата", item.Date);
+                                    helper.Replace("день", item.doc.firstDay.Day.ToString());
+                                    helper.Replace("месяц", item.doc.firstDay.Month.ToString());
+                                    helper.Replace("год", item.doc.firstDay.Year.ToString());
+                                    helper.Replace("День", item.doc.secondDay.Day.ToString());
+                                    helper.Replace("Месяц", item.doc.secondDay.Month.ToString());
+                                    helper.Replace("Год", item.doc.secondDay.Year.ToString());
+                                    helper.Replace("ФИО", item.Name);
+                                    helper.Replace("табель", item.EmployeeID.ToString());
+                                    helper.Replace("РОЛЬ", item.employee.roleTitle);
+                                    helper.Replace("Причина", item.doc.descFirst);
+                                    helper.Replace("краб", item.doc.descSecond);
+                                    helper.Replace("трудовой", $"{item.employee.id}{item.employee.employeeWordDay.Year}-{item.employee.employeeWordDay.Day}") ;
+                                    break;
+                                }
+                            case 1:
+                                {
+                                    //helper = new DocumentHelper(Properties.Resources.CreateEmploye);
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    //helper = new DocumentHelper(Properties.Resources.CreateEmploye);
+                                    break;
+                                }
+                                
+                        }
+                        helper.Save("test.docx");
+                        
+                    });
+                    loadDocs.Start();
+                }
+            }
+        }
+
+
+        object locker = new object();
+
+        public void UpdateData()
+        {
+            loading.IsEnabled = true;
+            loading.Visibility = Visibility.Visible;
+            loadThread = new Thread(() =>
+            {
+                lock(locker)
+                {
+                    vm.LoadData();
+                    HistoryDataGrid.Dispatcher.Invoke(() =>
+                    {
+                        HistoryDataGrid.ItemsSource = null;
+                        HistoryDataGrid.ItemsSource = vm.GetData();
+                        loading.IsEnabled = false;
+                        loading.Visibility = Visibility.Collapsed;
+                    });
+                }
+            });
+            loadThread.Start();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdateData();
         }
     }
 }

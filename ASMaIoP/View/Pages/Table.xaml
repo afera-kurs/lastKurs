@@ -14,7 +14,7 @@
             <ColumnDefinition Width="15*"/>
             <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
-        <wpf:ChromiumWebBrowser x:Name="Browser"/>
+        <UserControl x:Name="BrowserControl"/>
         <StackPanel Grid.Column="1">
             <Button x:Name="Search"
                     Margin="5"

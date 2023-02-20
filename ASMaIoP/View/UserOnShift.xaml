@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ASMaIoP.View"
         mc:Ignorable="d"
+        Loaded="Window_Loaded"
         ResizeMode="NoResize"
         Title="UserOnShift" Height="400" Width="355">
     <Grid>
