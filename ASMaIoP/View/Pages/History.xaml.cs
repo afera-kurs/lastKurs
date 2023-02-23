@@ -74,10 +74,12 @@ namespace ASMaIoP.View.Pages
                                     helper = new DocumentHelper(Properties.Resources.TrudDocx);
                                     helper.Replace("ДТСЕЙЧАС", item.Date);
                                     helper.Replace("ИМЯПОЛНОЕ", item.Name);
+                                    helper.Replace("ИМЯПОЛНОЕ", item.Name);
                                     helper.Replace("нДГ", $"{item.employee.id}{item.employee.employeeWordDay.Year}-{item.employee.employeeWordDay.Day}");
                                     helper.Replace("ИМЯРОЛИ", item.employee.roleTitle);
-                                    helper.Replace("ДАТАПЕРВЫЙД", item.doc.secondDay.ToString());
-                                    helper.Replace("ДАТАПЕРВЫЙДК", item.doc.secondDay.AddDays(7).ToString());
+                                    helper.Replace("ДАТАПЕРВЫЙД", item.doc.secondDay.Date.ToString());
+                                    helper.Replace("ДАТАПЕРВЫЙД", item.doc.secondDay.Date.ToString());
+                                    helper.Replace("ДАТАПЕРВЫЙДК", item.doc.secondDay.Date.AddDays(7).ToString());
                                     helper.Replace("АДРЕСС", item.employee.adress);
                                     break;
                                 }

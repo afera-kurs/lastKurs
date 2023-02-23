@@ -361,6 +361,7 @@
   <ItemGroup>
     <None Include="Resources\DismissedEmployee.docx" />
     <None Include="Resources\TrudDocx.doc" />
+    <None Include="Resources\TrudDocx.docx" />
     <None Include="View\Resource\default.png" />
   </ItemGroup>
   <ItemGroup>

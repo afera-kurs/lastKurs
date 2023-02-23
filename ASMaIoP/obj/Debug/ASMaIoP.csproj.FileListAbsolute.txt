@@ -749,7 +749,6 @@ E:\Code\!Famouse\lastKurs\ASMaIoP\bin\Debug\System.ValueTuple.dll
 E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\ASMaIoP.csproj.AssemblyReference.cache
 E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\ASMaIoP.csproj.SuggestedBindingRedirects.cache
 E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\ASMaIoP.exe.config
-E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\View\cmbStyle.baml
 E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\View\AddWeakend.g.cs
 E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\View\Auth.g.cs
 E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\View\CreateEmployee.g.cs
@@ -793,7 +792,6 @@ E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\View\Pages\Table.baml
 E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\View\Pages\TaskView.baml
 E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\View\ReasonDississed.baml
 E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\View\SelectExcucant.baml
-E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\View\Style.baml
 E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\View\TaskCreate.baml
 E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\View\UserOnShift.baml
 E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\ASMaIoP.g.resources
@@ -1160,3 +1158,9 @@ C:\Users\caratovchanin\source\repos\lastKurs\ASMaIoP\obj\Debug\View\StyleAndCust
 C:\Users\caratovchanin\source\repos\lastKurs\ASMaIoP\obj\Debug\View\StyleAndCustElement\Loading.baml
 C:\Users\caratovchanin\source\repos\lastKurs\ASMaIoP\obj\Debug\View\StyleAndCustElement\Style.baml
 C:\Users\caratovchanin\source\repos\lastKurs\ASMaIoP\bin\Debug\giphy.gif
+E:\Code\!Famouse\lastKurs\ASMaIoP\bin\Debug\giphy.gif
+E:\Code\!Famouse\lastKurs\ASMaIoP\bin\Debug\DocumentFormat.OpenXml.dll
+E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\View\StyleAndCustElement\cmbStyle.baml
+E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\View\StyleAndCustElement\Loading.g.cs
+E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\View\StyleAndCustElement\Loading.baml
+E:\Code\!Famouse\lastKurs\ASMaIoP\obj\Debug\View\StyleAndCustElement\Style.baml

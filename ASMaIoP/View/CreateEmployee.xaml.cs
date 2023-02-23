@@ -31,6 +31,7 @@ namespace ASMaIoP.View
         public CreateEmployee(ProfileData prof)
         {
             InitializeComponent();
+            FirstWorkDay.SelectedDate = DateTime.Now;
             vm = new CreateEmployeeVM(prof);
             DataContext = vm;
             UpdateDataDelegate = () =>

@@ -506,7 +506,7 @@ namespace ASMaIoP.Model
             connection.Open();
             DocumentHelper helper;
             MySqlCommand cmd = new MySqlCommand($"INSERT INTO employee(employee_people_ID, employee_role_ID, employee_login, employee_pass, employee_work_day)" +
-                $"VALUES(LAST_INSERT_ID(),{roleID}, '{login}', '{Utils.sha256(password)}, '{FormatOnlyDateToSql(fistWorkDay)}')", connection.SqlConnection);
+                $"VALUES(LAST_INSERT_ID(),{roleID}, '{login}', '{Utils.sha256(password)}', '{FormatOnlyDateToSql(fistWorkDay)}')", connection.SqlConnection);
 
             IsSuccess &= cmd.ExecuteNonQuery() > 0;
 
@@ -537,15 +537,17 @@ namespace ASMaIoP.Model
             cmd = new MySqlCommand($"SELECT role_title FROM role WHERE role_ID = {roleID}", connection.SqlConnection);
             string roleName = cmd.ExecuteScalar().ToString();
 
-            int docId = DocsCreate(1, DateTime.Now.Date, fistWorkDay, $"{employeeID}{fistWorkDay.Year}-{fistWorkDay.Day}", "Прният на работу");
-            HistroyCreateNew(DateTime.Now.Date, "Принят на работу", docId, prof.id, int.Parse(employeeID));
+            int docId = DocsCreate(1, DateTime.Now.Date, fistWorkDay, $"{employeeID}{fistWorkDay.Year}-{fistWorkDay.Day}", "Прният на работу", false);
+            HistroyCreateNew(DateTime.Now.Date, "Принят на работу", docId, prof.id, int.Parse(employeeID), false);
             helper = new DocumentHelper(Properties.Resources.TrudDocx);
             helper.Replace("ДТСЕЙЧАС", DateTime.Now.Date.ToString("dd.MM.yyyy"));
             helper.Replace("ИМЯПОЛНОЕ", $"{surname} {name} {patName}");
+            helper.Replace("ИМЯПОЛНОЕ", $"{surname} {name} {patName}");
             helper.Replace("нДГ", $"{employeeID}{fistWorkDay.Year}-{fistWorkDay.Day}");
             helper.Replace("ИМЯРОЛИ", roleName);
-            helper.Replace("ДАТАПЕРВЫЙД", fistWorkDay.ToString());
-            helper.Replace("ДАТАПЕРВЫЙДК", fistWorkDay.AddDays(7).ToString());
+            helper.Replace("ДАТАПЕРВЫЙД", fistWorkDay.Date.ToString());
+            helper.Replace("ДАТАПЕРВЫЙД", fistWorkDay.Date.ToString());
+            helper.Replace("ДАТАПЕРВЫЙДК", fistWorkDay.Date.AddDays(7).ToString());
             helper.Replace("АДРЕСС", address);
 
             var fileContent = string.Empty;
@@ -823,7 +825,7 @@ namespace ASMaIoP.Model
                 docsIdPlaceHolder = $"{docsId.Value}";
             }
 
-            string sql = $"INSERT history(histroy_date, history_description, history_docs_ID, histroy_owner_ID, history_employe_ID) VALUES('{FormatDateToSql(dt)}', '{desc}', {docsIdPlaceHolder}, {ownerID}, {emplID})";
+            string sql = $"INSERT history(history_date, history_description, history_docs_ID, history_owner_ID, history_employe_ID) VALUES('{FormatDateToSql(dt)}', '{desc}', {docsIdPlaceHolder}, {ownerID}, {emplID})";
             MySqlCommand cmd = new MySqlCommand(sql, connection.SqlConnection);
             
             cmd.ExecuteNonQuery();
@@ -906,13 +908,13 @@ namespace ASMaIoP.Model
             if (openConnection)
                 connection.Open();
 
-            string sql = $"INSERT docs(docs_type, docs_firstDay, docs_secondDay) VALUES({docsType}, '{FormatDateToSql(firstDay)}', '{FormatDateToSql(secondDay)}', '{descFirst}', '{descSecond}')";
+            string sql = $"INSERT docs(docs_type, docs_firstDay, docs_secondDay, docs_descFirst, docs_descSecond) VALUES({docsType}, '{FormatDateToSql(firstDay)}', '{FormatDateToSql(secondDay)}', '{descFirst}', '{descSecond}')";
 
             MySqlCommand cmd = new MySqlCommand(sql, connection.SqlConnection);
 
             cmd.ExecuteNonQuery();
 
-            cmd = new MySqlCommand("SELECT LAST_INSERT_ID();");
+            cmd = new MySqlCommand("SELECT LAST_INSERT_ID();", connection.SqlConnection);
             string id = cmd.ExecuteScalar().ToString();
 
             if (openConnection)
