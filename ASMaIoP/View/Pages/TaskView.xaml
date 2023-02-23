@@ -8,7 +8,6 @@
       d:DesignHeight="450" d:DesignWidth="1200"
       Loaded="Page_Loaded"
       Title="TaskView">
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
@@ -25,6 +24,7 @@
                 Width="100"/>
         <DataGrid Grid.Row="1"
                   IsReadOnly="True"
+                  Margin="15"
                   AutoGenerateColumns="False"
                   MouseDoubleClick="TaskDataGrid_MouseDoubleClick"
                   ItemsSource="{Binding}"

@@ -53,7 +53,7 @@ namespace ASMaIoP.View
             helper.Replace("Месяц", DateDism.SelectedDate.Value.Month.ToString());
             helper.Replace("Год", DateDism.SelectedDate.Value.Year.ToString());
             helper.Replace("ФИО", $"{data.name} {data.name} {data.patName}");
-            helper.Replace("табель", data.EmployeeId.ToString());
+            helper.Replace("табель", data.EmployeeId.ToString());   
             helper.Replace("РОЛЬ", data.roleTitle);
             helper.Replace("Причина", descght.Text);
             helper.Replace("краб", descghtDate.Text);
@@ -65,7 +65,7 @@ namespace ASMaIoP.View
             SaveFileDialog openFileDialog = new SaveFileDialog();
             {
                 openFileDialog.InitialDirectory = "c:\\";
-                openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+                openFileDialog.Filter = "Word Documents|*.docx";
                 openFileDialog.FilterIndex = 2;
                 openFileDialog.RestoreDirectory = true;
                 bool? result = openFileDialog.ShowDialog();

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ASMaIoP.ViewModel;
+using ASMaIoP.Model;
 
 namespace ASMaIoP.View
 {
@@ -21,8 +22,10 @@ namespace ASMaIoP.View
     public partial class SelectExcucant : Window
     {
         TaskExecutantVM vm;
-        public SelectExcucant(List<TaskExecutantRow> employeeSelected)
+        ProfileData prof;
+        public SelectExcucant(List<TaskExecutantRow> employeeSelected, ProfileData prof)
         {
+            this.prof = prof;
             vm = new TaskExecutantVM(employeeSelected);
             InitializeComponent();
             DataContext = vm;
@@ -41,5 +44,43 @@ namespace ASMaIoP.View
             vm.PrepairResult();
             this.Close();
         }
+
+        private void SelectedExcecut_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            var r = e.Row;
+            //var prod = 
+
+            if(r.DataContext is TaskExecutantVMRow prod)
+            {
+                if(prof.accessLevel <= 3)
+                {
+                    switch (prof.accessLevel)
+                    {
+                        case 1:
+                            {
+                                SelectedExcecut.IsEnabled = false;
+                                break;
+                            }
+                        case 2:
+                            {
+                                if(prod.level >= prof.accessLevel)
+                                {
+                                    r.IsEnabled = false;
+                                }
+                                break;
+                            }
+                        case 3:
+                            {
+                                break;
+                            }
+                        default:
+                            SelectedExcecut.IsEnabled = false;
+                            break;
+                    }
+                }
+            }
+
+        }
     }
 }
+    

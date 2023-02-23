@@ -1,4 +1,5 @@
-﻿using ASMaIoP.ViewModel;
+﻿using ASMaIoP.Model;
+using ASMaIoP.ViewModel;
 using ASMaIoP.ViewModel.tasks;
 using Org.BouncyCastle.Crypto;
 using System;
@@ -14,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ASMaIoP.ViewModel;
 
 namespace ASMaIoP.View
 {
@@ -26,8 +28,11 @@ namespace ASMaIoP.View
         List<string> ids;
         TaskEditVM vm;
         TaskColumView tasks;
-        public EditTask(TaskColumView tasks)
+
+        ProfileData prof;
+        public EditTask(TaskColumView tasks, ProfileData prof)
         {
+            this.prof = prof;
             InitializeComponent();
             vm = new TaskEditVM(tasks);
             DataContext = vm;
@@ -41,7 +46,7 @@ namespace ASMaIoP.View
 
         private void ChangeExecut_Click(object sender, RoutedEventArgs e)
         {
-            SelectExcucant excucant = new SelectExcucant(vm.GetSelectedEmployes());
+            SelectExcucant excucant = new SelectExcucant(vm.GetSelectedEmployes(), prof);
             excucant.ShowDialog();
             res = excucant.GetRes();
 

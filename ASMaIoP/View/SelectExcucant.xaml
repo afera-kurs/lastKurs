@@ -18,6 +18,7 @@
                   ItemsSource="{Binding}" 
                   AutoGenerateColumns="False"
                   Margin="5"
+                  LoadingRow="SelectedExcecut_LoadingRow"
                   >
             <DataGrid.Columns>
                 <DataGridTextColumn IsReadOnly="True" Header="ФИО" Binding="{Binding Path=Name}" Width="120"/>

@@ -81,12 +81,12 @@ namespace ASMaIoP.Properties {
         }
         
         /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
-        internal static System.Drawing.Bitmap giphy {
+        internal static byte[] TrudDocx {
             get {
-                object obj = ResourceManager.GetObject("giphy", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                object obj = ResourceManager.GetObject("TrudDocx", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

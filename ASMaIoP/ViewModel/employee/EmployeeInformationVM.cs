@@ -16,6 +16,7 @@ namespace ASMaIoP.ViewModel
     {
         private string name;
         private string surname;
+        private string patName;
         private string address;
         private string phone;
 
@@ -55,6 +56,24 @@ namespace ASMaIoP.ViewModel
             set
             {
                 surname = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(edit_Surname)));
+            }
+        }
+        public string PatName
+        {
+            get => patName;
+            set
+            {
+                patName = value;
+
+            }
+        }
+
+        public string edit_PatName
+        {
+            set
+            {
+                patName = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(edit_Surname)));
             }
         }
@@ -158,7 +177,7 @@ namespace ASMaIoP.ViewModel
                     //databaseInterface.HistoryCreate(prof.id.ToString(), Data.EmployeeId.ToString(), Name, DateTime.Now, $"Переведен с должности {Data.roleTitle} на {NewRoleTitle}");
                 }
 
-                databaseInterface.EditEmploy(Data.EmployeeId, Name, Surname, Address, Phone, RoleId, CardId);
+                databaseInterface.EditEmploy(Data.EmployeeId, Name, Surname, PatName, Address, Phone, RoleId, CardId);
             }
             catch (Exception ex)
             {
@@ -171,7 +190,7 @@ namespace ASMaIoP.ViewModel
         {
             try
             {
-                databaseInterface.EditEmploy(Data.EmployeeId, Name, Surname, Address, Phone, Data.roleId, CardId);
+                databaseInterface.EditEmploy(Data.EmployeeId, Name, Surname, PatName, Address, Phone, Data.roleId, CardId);
             }
             catch (Exception ex)
             {

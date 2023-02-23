@@ -44,7 +44,8 @@ namespace ASMaIoP.View.Pages
         private void CreateTaskButton_Click(object sender, RoutedEventArgs e)
         {
             taskCreate = new TaskCreate(prof);
-            taskCreate.ShowDialog();        
+            taskCreate.ShowDialog();
+            UpdateData();
         }
 
         private void TaskDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -54,35 +55,48 @@ namespace ASMaIoP.View.Pages
 
             if(TaskDataGrid.SelectedItem is TaskColumView item)
             {
-                task = new EditTask(item);
+                task = new EditTask(item, prof);
                 task.ShowDialog();
+                UpdateData();
             }
             
         }
 
         Thread thread;
+        object locker = new object();
+
+        private void UpdateData()
+        {
+            loading.IsEnabled = true;
+            loading.Visibility = Visibility.Visible;
+            thread = new Thread(() =>
+            {
+                lock(locker)
+                {
+                    if (prof.accessLevel > 3)
+                    {
+                        vm.LoadData();
+                    }
+                    else
+                    {
+                        vm.LoadData(prof.id);
+                    }
+                    TaskDataGrid.Dispatcher.Invoke(() =>
+                    {
+                        TaskDataGrid.ItemsSource = null;
+                        TaskDataGrid.ItemsSource = vm.GetTasksView();
+                        loading.Visibility = Visibility.Collapsed;
+                        loading.IsEnabled = false;
+                    });
+                }
+            });
+
+            thread.Start();
+        }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            thread = new Thread(() =>
-            {
-                if (prof.accessLevel > 3)
-                {
-                    vm.LoadData();
-                }
-                else
-                {
-                    vm.LoadData(prof.id);
-                }
-                TaskDataGrid.Dispatcher.Invoke(() =>
-                {
-                    TaskDataGrid.ItemsSource = null;
-                    TaskDataGrid.ItemsSource = vm.GetTasksView();
-                    loading.Visibility = Visibility.Collapsed;
-                });
-            });
-
-            thread.Start(); 
+            UpdateData();
 
         }
     }

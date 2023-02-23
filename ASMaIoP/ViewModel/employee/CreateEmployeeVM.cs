@@ -16,6 +16,7 @@ namespace ASMaIoP.ViewModel
     {
         private string name;
         private string surname;
+        private string patName;
         private string address;
         private string phoneNumber;
         private string cardId;
@@ -39,6 +40,16 @@ namespace ASMaIoP.ViewModel
             set
             {
                 surname = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Surname)));
+            }
+        }
+
+        public string PatName
+        {
+            get => patName;
+            set
+            {
+                patName = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Surname)));
             }
         }
@@ -155,7 +166,8 @@ namespace ASMaIoP.ViewModel
         {
             try
             {
-                databaseInterface.AddEmployee(Name, Surname, Address, PhoneNumber, roleId, Login, Password, CardId, FirstWorkDay, prof);
+                databaseInterface.AddEmployee(Name, Surname, PatName, Address, PhoneNumber, roleId, Login, Password, CardId, FirstWorkDay, prof);
+
             }
             catch(Exception ex)
             {

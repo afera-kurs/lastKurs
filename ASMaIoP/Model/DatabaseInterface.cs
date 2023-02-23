@@ -11,6 +11,8 @@ using System.Web.Security;
 using ControlzEx.Standard;
 using System.Security.Cryptography;
 using Org.BouncyCastle.Utilities.Collections;
+using CefSharp.DevTools.Audits;
+using Microsoft.Win32;
 
 namespace ASMaIoP.Model
 {
@@ -22,6 +24,7 @@ namespace ASMaIoP.Model
         public string patName;
         public string pictureUrl;
         public string roleTitle;
+        public string adress;
 
         public bool isShiftStarted;
         public bool isDismissed;
@@ -52,6 +55,7 @@ namespace ASMaIoP.Model
 
         public int roleId;
         public string roleTitle;
+        public int roleLevel;
 
         public DateTime firstDay;
     }
@@ -193,7 +197,7 @@ namespace ASMaIoP.Model
             connection.Open();
 
             MySqlCommand cmd = new MySqlCommand(
-                $"SELECT employee.employee_image_url, people.people_name, people.people_surname, role.role_title, role.role_lvl, employee.employee_work_shift, employee_status, cards_ID, people.people_patName, employee_work_day FROM employee INNER JOIN people ON employee.employee_people_ID=people.people_ID INNER JOIN role ON employee.employee_role_ID=role.role_ID INNER JOIN cards ON cards.cards_employee_ID = employee.employee_ID WHERE employee.employee_ID={nId}"
+                $"SELECT employee.employee_image_url, people.people_name, people.people_surname, role.role_title, role.role_lvl, employee.employee_work_shift, employee_status, cards_ID, people.people_patName, employee_work_day, people_address FROM employee INNER JOIN people ON employee.employee_people_ID=people.people_ID INNER JOIN role ON employee.employee_role_ID=role.role_ID INNER JOIN cards ON cards.cards_employee_ID = employee.employee_ID WHERE employee.employee_ID={nId}"
             , connection.SqlConnection);
 
             MySqlDataReader reader = cmd.ExecuteReader();
@@ -213,6 +217,7 @@ namespace ASMaIoP.Model
                 data.cardId = reader[7].ToString();
                 data.patName = reader[8].ToString();
                 data.employeeWordDay = reader.GetDateTime(9);
+                data.adress = reader[10].ToString();
             }
 
             reader.Close();
@@ -433,15 +438,15 @@ namespace ASMaIoP.Model
             return int.Parse(thisMoment)-int.Parse(time);
         }
 
-        private bool AddPeople(string name, string surname, string address, string phoneNumber)
+        private bool AddPeople(string name, string surname, string address, string patName, string phoneNumber)
         {
             connection.Open();
 
             address = address.Length > 0 ? address : "NULL";
             phoneNumber = phoneNumber.Length > 0 ? phoneNumber : "NULL";
 
-            MySqlCommand cmd = new MySqlCommand($"INSERT INTO people(people_name, people_surname, people_address, people_phone_number) " +
-                $"VALUES('{name}', '{surname}', '{address}', '{phoneNumber}')", connection.SqlConnection);
+            MySqlCommand cmd = new MySqlCommand($"INSERT INTO people(people_name, people_surname, people_patName, people_address, people_phone_number) " +
+                $"VALUES('{name}', '{surname}', '{patName}', '{address}', '{phoneNumber}')", connection.SqlConnection);
 
             int nCount = cmd.ExecuteNonQuery();
 
@@ -454,7 +459,7 @@ namespace ASMaIoP.Model
         {
             connection.Open();
 
-            MySqlCommand cmd = new MySqlCommand($"SELECT employee_ID, employee_people_ID, employee_role_ID, people_name, people_surname, people_address, people_phone_number, role_title, employee_status, cards_INDEX, cards_ID, people_patName, employee_work_day FROM employee INNER JOIN people ON employee_people_ID=people_ID INNER JOIN role ON employee_role_ID=role.role_ID INNER JOIN cards ON cards_employee_ID=employee_ID", connection.SqlConnection);
+            MySqlCommand cmd = new MySqlCommand($"SELECT employee_ID, employee_people_ID, employee_role_ID, people_name, people_surname, people_address, people_phone_number, role_title, employee_status, cards_INDEX, cards_ID, people_patName, employee_work_day, role_lvl FROM employee INNER JOIN people ON employee_people_ID=people_ID INNER JOIN role ON employee_role_ID=role.role_ID INNER JOIN cards ON cards_employee_ID=employee_ID", connection.SqlConnection);
 
             MySqlDataReader reader = cmd.ExecuteReader();
             
@@ -480,6 +485,8 @@ namespace ASMaIoP.Model
 
                 data.firstDay = reader.GetDateTime(12);
 
+                data.roleLevel = reader.GetInt32(13);
+
                 employees.Add(data);
             }
 
@@ -487,7 +494,7 @@ namespace ASMaIoP.Model
         }
 
         public bool AddEmployee(
-            string name, string surname,
+            string name, string surname, string patName,
             string address, string phoneNumber,
             int roleID,
             string login, string password,
@@ -495,9 +502,9 @@ namespace ASMaIoP.Model
             DateTime fistWorkDay,
             ProfileData prof)
         {
-            bool IsSuccess = AddPeople(name, surname, address, phoneNumber);
+            bool IsSuccess = AddPeople(name, surname, patName, address, phoneNumber);
             connection.Open();
-
+            DocumentHelper helper;
             MySqlCommand cmd = new MySqlCommand($"INSERT INTO employee(employee_people_ID, employee_role_ID, employee_login, employee_pass, employee_work_day)" +
                 $"VALUES(LAST_INSERT_ID(),{roleID}, '{login}', '{Utils.sha256(password)}, '{FormatOnlyDateToSql(fistWorkDay)}')", connection.SqlConnection);
 
@@ -527,9 +534,44 @@ namespace ASMaIoP.Model
                 IsSuccess &= cmd.ExecuteNonQuery() > 0;
             
             }
+            cmd = new MySqlCommand($"SELECT role_title FROM role WHERE role_ID = {roleID}", connection.SqlConnection);
+            string roleName = cmd.ExecuteScalar().ToString();
 
-            //int docId = DocsCreate();
-            //HistroyCreateNew();
+            int docId = DocsCreate(1, DateTime.Now.Date, fistWorkDay, $"{employeeID}{fistWorkDay.Year}-{fistWorkDay.Day}", "Прният на работу");
+            HistroyCreateNew(DateTime.Now.Date, "Принят на работу", docId, prof.id, int.Parse(employeeID));
+            helper = new DocumentHelper(Properties.Resources.TrudDocx);
+            helper.Replace("ДТСЕЙЧАС", DateTime.Now.Date.ToString("dd.MM.yyyy"));
+            helper.Replace("ИМЯПОЛНОЕ", $"{surname} {name} {patName}");
+            helper.Replace("нДГ", $"{employeeID}{fistWorkDay.Year}-{fistWorkDay.Day}");
+            helper.Replace("ИМЯРОЛИ", roleName);
+            helper.Replace("ДАТАПЕРВЫЙД", fistWorkDay.ToString());
+            helper.Replace("ДАТАПЕРВЫЙДК", fistWorkDay.AddDays(7).ToString());
+            helper.Replace("АДРЕСС", address);
+
+            var fileContent = string.Empty;
+            var filePath = string.Empty;
+
+            SaveFileDialog openFileDialog = new SaveFileDialog();
+            {
+                openFileDialog.InitialDirectory = "c:\\";
+                openFileDialog.Filter = "Word Documents|*.docx";
+                openFileDialog.FilterIndex = 2;
+                openFileDialog.RestoreDirectory = true;
+                bool? result = openFileDialog.ShowDialog();
+
+                if (result == null)
+                {
+
+                }
+                else if (!result.Value)
+                {
+
+                }
+                else if (result.Value)
+                {
+                    helper.Save(openFileDialog.FileName);
+                }
+            }
 
             connection.Close();
 
@@ -537,7 +579,7 @@ namespace ASMaIoP.Model
         }
 
         public int EditEmploy(int employeeID,
-            string name, string surname,
+            string name, string surname, string patName,
             string address, string phoneNumber,
             int roleID,
             string cardId)
@@ -556,7 +598,7 @@ namespace ASMaIoP.Model
                 cardId = $"'{cardId}'";
             }
 
-            string sql = $"UPDATE employee INNER JOIN people ON people.people_ID=employee.employee_people_ID INNER JOIN cards ON cards_employee_ID=employee_ID SET employee.employee_role_ID='{roleID}', people.people_name ='{name}',people.people_surname='{surname}', people.people_address='{address}', people.people_phone_number='{phoneNumber}' , cards.cards_ID={cardId} WHERE employee.employee_ID={employeeID}";
+            string sql = $"UPDATE employee INNER JOIN people ON people.people_ID=employee.employee_people_ID INNER JOIN cards ON cards_employee_ID=employee_ID SET employee.employee_role_ID='{roleID}', people.people_name ='{name}',people.people_surname='{surname}', people.people_patName='{patName}', people.people_address='{address}', people.people_phone_number='{phoneNumber}' , cards.cards_ID={cardId} WHERE employee.employee_ID={employeeID}";
 
             connection.Open();
 

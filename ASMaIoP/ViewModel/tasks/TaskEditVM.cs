@@ -120,7 +120,7 @@ namespace ASMaIoP.ViewModel.tasks
 
             foreach(EmployeeData e in taskEmps)
             {
-                string name = e.name;
+                string name = $"{e.name} {e.surname}";
                 res.Add(name);
             }
 
@@ -135,7 +135,7 @@ namespace ASMaIoP.ViewModel.tasks
             {
                 TaskExecutantRow row = new TaskExecutantRow();
                 row.employeeID = e.EmployeeId;
-                row.employeeName = e.name;
+                row.employeeName = $"{e.name} {e.surname}";
                 res.Add(row);
             }
 

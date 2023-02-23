@@ -82,17 +82,16 @@ namespace ASMaIoP.View.Pages
         }
         private void OnBrowserJavascriptMessageReceived(object sender, JavascriptMessageReceivedEventArgs e)
         {
-                Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
+            {
+                var windowSelection = (string)e.Message;
+                editTable = new EditTable(windowSelection, vm.year, vm.month, () =>
                 {
-                    var windowSelection = (string)e.Message;
-                    editTable = new EditTable(windowSelection, vm.year, vm.month, () =>
-                    {
 
-                        UpdateTabel();
-                    });
-                    editTable.Show();
+                    UpdateTabel();
                 });
-
+                editTable.ShowDialog();
+            });
         }
 
         private void Print_Click(object sender, RoutedEventArgs e)

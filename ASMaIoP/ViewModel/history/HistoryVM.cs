@@ -25,6 +25,7 @@ namespace ASMaIoP.ViewModel
 
         }
 
+
         List<HistoryRow> HistoryList;
 
         List<HistroyInformation> data;

@@ -15,6 +15,10 @@ using System.Windows.Shapes;
 using ASMaIoP.Model;
 using ASMaIoP.ViewModel;
 using System.Threading;
+using Microsoft.Win32;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using DocumentFormat.OpenXml.Wordprocessing;
+using System.Xml.Linq;
 
 namespace ASMaIoP.View.Pages
 {
@@ -67,7 +71,14 @@ namespace ASMaIoP.View.Pages
                                 }
                             case 1:
                                 {
-                                    //helper = new DocumentHelper(Properties.Resources.CreateEmploye);
+                                    helper = new DocumentHelper(Properties.Resources.TrudDocx);
+                                    helper.Replace("ДТСЕЙЧАС", item.Date);
+                                    helper.Replace("ИМЯПОЛНОЕ", item.Name);
+                                    helper.Replace("нДГ", $"{item.employee.id}{item.employee.employeeWordDay.Year}-{item.employee.employeeWordDay.Day}");
+                                    helper.Replace("ИМЯРОЛИ", item.employee.roleTitle);
+                                    helper.Replace("ДАТАПЕРВЫЙД", item.doc.secondDay.ToString());
+                                    helper.Replace("ДАТАПЕРВЫЙДК", item.doc.secondDay.AddDays(7).ToString());
+                                    helper.Replace("АДРЕСС", item.employee.adress);
                                     break;
                                 }
                             case 2:
@@ -77,8 +88,16 @@ namespace ASMaIoP.View.Pages
                                 }
                                 
                         }
-                        helper.Save("test.docx");
-                        
+                        SaveFileDialog dialog = new SaveFileDialog();
+                        dialog.Filter = "Word Documents|*.docx";
+                        dialog.FilterIndex = 2;
+                        dialog.RestoreDirectory = true;
+                        bool? some = dialog.ShowDialog();
+                        if (some != null && some.Value)
+                        {
+                            helper.Save(dialog.FileName);
+                        }
+                                              
                     });
                     loadDocs.Start();
                 }

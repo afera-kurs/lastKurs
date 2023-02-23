@@ -1159,4 +1159,4 @@ C:\Users\caratovchanin\source\repos\lastKurs\ASMaIoP\obj\Debug\View\StyleAndCust
 C:\Users\caratovchanin\source\repos\lastKurs\ASMaIoP\obj\Debug\View\StyleAndCustElement\Loading.g.cs
 C:\Users\caratovchanin\source\repos\lastKurs\ASMaIoP\obj\Debug\View\StyleAndCustElement\Loading.baml
 C:\Users\caratovchanin\source\repos\lastKurs\ASMaIoP\obj\Debug\View\StyleAndCustElement\Style.baml
-C:\Users\caratovchanin\source\repos\lastKurs\ASMaIoP\bin\Debug\View\Resource\giphy.gif
+C:\Users\caratovchanin\source\repos\lastKurs\ASMaIoP\bin\Debug\giphy.gif

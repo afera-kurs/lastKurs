@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ASMaIoP.ViewModel;
 using ASMaIoP.Model;
+using System.Threading;
 
 namespace ASMaIoP.View
 {
@@ -38,7 +39,7 @@ namespace ASMaIoP.View
 
         private void ChangeExecut_Click(object sender, RoutedEventArgs e)
         {
-            SelectExcucant excucant = new SelectExcucant(res);
+            SelectExcucant excucant = new SelectExcucant(res, profile);
             excucant.ShowDialog();
             res = excucant.GetRes();
 
@@ -48,7 +49,7 @@ namespace ASMaIoP.View
 
             foreach(TaskExecutantRow r in res)
             {
-                names.Add(r.employeeName);
+                names.Add($"{r.employeeName}");
                 ids.Add(r.employeeID.ToString());
             }
             ListExecut.ItemsSource = null;
@@ -56,13 +57,24 @@ namespace ASMaIoP.View
 
         }
 
+        Thread thread;
+
         private void CreateUser_Click(object sender, RoutedEventArgs e)
         {
             DateTime? nullD = LastDay.SelectedDate;
             DateTime d = nullD.Value;
             bool a = Quickly.IsChecked.Value;
-            int id = vm.CreateTask(TitleTask.Text, profile.id.ToString(), Description.Text, d, a.ToString());
-            vm.CreateExecut(ids, $"{id}");
+            string txt = TitleTask.Text;
+            string id = profile.id.ToString();
+            string desc = Description.Text;
+            thread = new Thread(() =>
+            {
+                int my_id_id = vm.CreateTask(txt, id, desc, d, a.ToString());
+                vm.CreateExecut(ids, $"{my_id_id}");
+            });
+            thread.Start();
+            
+            this.Close();
         }
     }
 }

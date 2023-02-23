@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using ASMaIoP.View;
 using ASMaIoP.ViewModel;
 using ASMaIoP.Model;
+using System.Web.Security;
 
 namespace ASMaIoP.View.Pages
 {
@@ -30,6 +31,7 @@ namespace ASMaIoP.View.Pages
         public JobsList(Grid AnimationGrid)
         {
             this.AnimationGrid = AnimationGrid;
+            vm = new JobsListVM();
             InitializeComponent();
         }
 
@@ -37,6 +39,7 @@ namespace ASMaIoP.View.Pages
         {
             CreateJob wnd = new CreateJob();
             wnd.ShowDialog();
+            LoadData();
         }
 
         private void JobsDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -50,20 +53,23 @@ namespace ASMaIoP.View.Pages
             
             EditJob job = new EditJob(column);
             job.ShowDialog();
+            LoadData();
         }
 
         Task pageLoad = null;
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {   
+        public void LoadData()
+        {
+            AnimationGrid.Visibility = Visibility.Visible;
+            AnimationGrid.IsEnabled = true;
+
             CreateJob.Visibility =
             Guard.RoleEditPanel
             ? Visibility.Visible : Visibility.Collapsed;
             pageLoad = Task.Factory.StartNew(() =>
             {
-                vm = new JobsListVM();
+
                 vm.UpdateRoles();
-                
                 vm.LoadDataToDataGrid((roles) =>
                 {
                     JobsDataGrid.Dispatcher.Invoke(() =>
@@ -75,6 +81,12 @@ namespace ASMaIoP.View.Pages
                     });
                 });
             });
+
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadData();
         }
 
         

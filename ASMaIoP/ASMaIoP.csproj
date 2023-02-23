@@ -360,10 +360,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\DismissedEmployee.docx" />
+    <None Include="Resources\TrudDocx.doc" />
     <None Include="View\Resource\default.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="View\Resource\giphy.gif">
+    <EmbeddedResource Include="giphy.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

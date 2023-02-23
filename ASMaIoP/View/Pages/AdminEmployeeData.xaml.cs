@@ -90,11 +90,13 @@ namespace ASMaIoP.View.Pages
                     EmployeeDataGrid.ItemsSource = tabel;
                 });
             });
+            
         }
 
         internal void ShowEmployeeInfoWindow(EmployeeDataColumn data)
         {
             vm.ShowWindow(data);
+            UpdateData();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

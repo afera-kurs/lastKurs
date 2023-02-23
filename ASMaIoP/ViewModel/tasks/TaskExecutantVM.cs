@@ -7,7 +7,7 @@ using ASMaIoP.Model;
 
 namespace ASMaIoP.ViewModel
 {
-    public struct TaskExecutantRow
+    public class TaskExecutantRow
     {
         public int employeeID;
         public string employeeName;
@@ -32,10 +32,12 @@ namespace ASMaIoP.ViewModel
                 replace.RoleTitle = this.RoleTitle;
                 replace.isSelected = isSelected;
                 replace.Id = Id;
+                replace.level = level;
                 parentVM.store[index] = replace;
             }
         }
         public int Id;
+        public int level;
 
         public int index;
         public TaskExecutantVM parentVM;
@@ -82,7 +84,7 @@ namespace ASMaIoP.ViewModel
                 r.Id = emp.EmployeeId;
                 r.index = i;
                 r.parentVM = this;
-                
+                r.level = emp.roleLevel;
                 if(Selected != null)
                 {
                     foreach (var s in Selected)
@@ -110,7 +112,7 @@ namespace ASMaIoP.ViewModel
                 {
                     TaskExecutantRow resRow = new TaskExecutantRow();
                     resRow.employeeID = r.Id;
-                    resRow.employeeName = r.Name;
+                    resRow.employeeName = $"{r.Name}";
                     res.Add(resRow);
                 }
             }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ASMaIoP.Model;
+using static ASMaIoP.Model.DatabaseInterface;
 
 namespace ASMaIoP.ViewModel
 {
@@ -14,14 +15,21 @@ namespace ASMaIoP.ViewModel
         {
             public string Date { get; set; }
             public string Name { get; set; }
-            public string EmployeeID { get; set; }
             public string OwnerName { get; set; }
+            public int EmployeeID { get; set; }
+            public int OwnerID { get; set; }
+            public int? DocsID { get; set; }
             public string Description { get; set; }
+            internal DocInformation doc;
+            public ProfileData employee;
+            public ProfileData owner;
+
         }
 
         List<HistoryRow> HistoryList;
 
-        List<HistroyInfo> data;
+        List<HistroyInformation> data;
+
         DatabaseInterface db;
 
         EmployeeData target;
@@ -39,22 +47,41 @@ namespace ASMaIoP.ViewModel
 
         public void LoadData()
         {
-            data = new List<HistroyInfo>();
-            db.LoadHistroy(data,target.EmployeeId);
+            data = new List<HistroyInformation>();
+            db.LoadDocs(data, target.EmployeeId);
 
             HistoryList = new List<HistoryRow>();
 
-            foreach (HistroyInfo info in data)
+            db.Connection.Open();
+
+            foreach (HistroyInformation info in data)
             {
                 HistoryRow row = new HistoryRow();
-                row.Name = info.targetName;
-                row.Date = info.date;
-                row.EmployeeID = info.employee_target_ID;
-                row.Description = info.desc;
-                row.OwnerName = info.owner;
+                ProfileData pd = db.GetEmployeeData(info.owner_ID, false);
+                row.OwnerName = $"{pd.name} {pd.surname} {pd.patName}";
+                row.OwnerID = info.owner_ID;
+                row.EmployeeID = info.empl_ID;
+                ProfileData emp = db.GetEmployeeData(info.empl_ID, false);
+                row.Name = $"{emp.name} {emp.surname} {emp.patName}";
+                row.Date = info.histroyDate.ToShortDateString();
+                row.Description = info.histroyDesc;
+                row.employee = emp;
+                row.owner = pd;
 
+                if (info.docs_ID != null)
+                {
+                    row.DocsID = info.docs_ID.Value;
+                    row.doc = info.information;
+                }
+                else
+                {
+                    row.DocsID = null;
+                }
                 HistoryList.Add(row);
             }
+
+            db.Connection.Close();
+
         }
 
         public List<HistoryRow> GetData()

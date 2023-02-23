@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Threading;
 
 namespace ASMaIoP.View
 {
@@ -23,6 +24,9 @@ namespace ASMaIoP.View
     public partial class AddWeakend : Window
     {
         AddWeakendVM vm;
+        object locker = new object();
+        Thread thread;
+
         public AddWeakend(ProfileData profile, EmployeeData data)
         {
             InitializeComponent();
@@ -31,9 +35,20 @@ namespace ASMaIoP.View
         }
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
+            DatabaseInterface.FillTableType fill = Type.SelectedIndex == 1 ? DatabaseInterface.FillTableType.Weekend : Type.SelectedIndex == 0 ? DatabaseInterface.FillTableType.Medical : DatabaseInterface.FillTableType.Weekend;
             if (LastDay.SelectedDate == null || FirstDay.SelectedDate == null) return;
-
-            vm.CreateWeakend(Description.Text, FirstDay.SelectedDate.Value, LastDay.SelectedDate.Value, Type.SelectedIndex == 1 ? DatabaseInterface.FillTableType.Weekend : Type.SelectedIndex == 0 ? DatabaseInterface.FillTableType.Medical : DatabaseInterface.FillTableType.Weekend);
+            string desc = Description.Text;
+            DateTime dt1 = FirstDay.SelectedDate.Value;
+            DateTime dt2 = LastDay.SelectedDate.Value;
+            thread = new Thread(() =>
+            {
+                lock(locker)
+                {
+                    vm.CreateWeakend(desc, dt1, dt2, fill);
+                }
+            });
+            thread.Start();
+            this.Close();
         }
     }
 }

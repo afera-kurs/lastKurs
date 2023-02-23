@@ -34,6 +34,7 @@ namespace ASMaIoP.ViewModel
         {
             try
             {
+                roles.Clear();
                 databaseInterface.GetRolesData(roles);
             }
             catch (Exception ex)
