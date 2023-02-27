@@ -89,5 +89,26 @@ namespace ASMaIoP.Properties {
                 return ((byte[])(obj));
             }
         }
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Byte[].
+        /// </summary>
+        internal static byte[] Perevod
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Perevod", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        internal static byte[] Weekend
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Weekend", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+
+
     }
 }

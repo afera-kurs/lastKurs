@@ -126,7 +126,8 @@
                                       Margin="10 5 10 5"
                                       Style="{DynamicResource Combobox_Base}">
                                 <TextBlock Text="Больничный"/>
-                                <TextBlock Text="Отпуск"/>
+                                <TextBlock Text="Отпуск ежегодный"/>
+                                <TextBlock Text="Отпуск за свой счёт"/>
                             </ComboBox>
                         </Grid>
                     </Border>

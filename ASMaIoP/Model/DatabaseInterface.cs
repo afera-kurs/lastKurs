@@ -550,9 +550,6 @@ namespace ASMaIoP.Model
             helper.Replace("ДАТАПЕРВЫЙДК", fistWorkDay.Date.AddDays(7).ToString());
             helper.Replace("АДРЕСС", address);
 
-            var fileContent = string.Empty;
-            var filePath = string.Empty;
-
             SaveFileDialog openFileDialog = new SaveFileDialog();
             {
                 openFileDialog.InitialDirectory = "c:\\";
@@ -1360,8 +1357,9 @@ namespace ASMaIoP.Model
 
         public enum FillTableType
         {
-            Weekend,
-            Medical
+            Weekend = 0,
+            WeekendAge = 1,
+            Medical = 2
         }
 
         public void AddFillTable(string desc, string owner, string employeeName, int employeeId, DateTime firstDate, DateTime endDateTime, FillTableType type)

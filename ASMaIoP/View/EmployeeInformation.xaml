@@ -73,6 +73,9 @@
             </StackPanel>
             <StackPanel Grid.Row="1"
                         Margin="5">
+                <TextBlock Text="Дата вступление изменений в силу"/>
+                <DatePicker Margin="5"
+                            x:Name="DateOfRagnarok"/>
                 <Button Grid.Column="1" 
                         Visibility="Collapsed"
                         x:Name="Delete"

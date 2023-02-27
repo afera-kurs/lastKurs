@@ -35,7 +35,21 @@ namespace ASMaIoP.View
         }
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            DatabaseInterface.FillTableType fill = Type.SelectedIndex == 1 ? DatabaseInterface.FillTableType.Weekend : Type.SelectedIndex == 0 ? DatabaseInterface.FillTableType.Medical : DatabaseInterface.FillTableType.Weekend;
+
+            DatabaseInterface.FillTableType fill = (DatabaseInterface.FillTableType)Type.SelectedIndex;
+            //switch (Type.SelectedIndex)
+            //{
+            //    case 0:
+            //        fill = DatabaseInterface.FillTableType.Medical;
+            //        break;
+            //    case 1:
+            //        fill = DatabaseInterface.FillTableType.WeekendAge;
+            //        break;
+            //    case 2:
+            //        fill = DatabaseInterface.FillTableType.Weekend;
+            //        break;
+            //}
+
             if (LastDay.SelectedDate == null || FirstDay.SelectedDate == null) return;
             string desc = Description.Text;
             DateTime dt1 = FirstDay.SelectedDate.Value;

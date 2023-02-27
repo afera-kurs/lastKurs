@@ -49,9 +49,10 @@ namespace ASMaIoP.View.Pages
             else
             {
                 int Id = int.Parse((string)v.Row.ItemArray[1]);
-                string Name = (string)v.Row.ItemArray[2];   
-                
-                vm.Apply(Id, Name);
+                string Name = (string)v.Row.ItemArray[2];
+                string reason = "";
+                ReasonForSwap reasonForSwap = new ReasonForSwap(ref reason);
+                vm.Apply(Id, Name, DateOfRagnarok.SelectedDate.Value, reason);
             }
 
             this.Close();

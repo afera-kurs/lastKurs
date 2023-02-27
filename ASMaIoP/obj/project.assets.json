@@ -4970,25 +4970,20 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\minec\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\caratovchanin\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Code\\!Famouse\\lastKurs\\ASMaIoP\\ASMaIoP.csproj",
+      "projectUniqueName": "C:\\Users\\caratovchanin\\source\\repos\\lastKurs\\lastKurs\\ASMaIoP\\ASMaIoP.csproj",
       "projectName": "ASMaIoP",
-      "projectPath": "E:\\Code\\!Famouse\\lastKurs\\ASMaIoP\\ASMaIoP.csproj",
-      "packagesPath": "C:\\Users\\minec\\.nuget\\packages\\",
-      "outputPath": "E:\\Code\\!Famouse\\lastKurs\\ASMaIoP\\obj\\",
+      "projectPath": "C:\\Users\\caratovchanin\\source\\repos\\lastKurs\\lastKurs\\ASMaIoP\\ASMaIoP.csproj",
+      "packagesPath": "C:\\Users\\caratovchanin\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\caratovchanin\\source\\repos\\lastKurs\\lastKurs\\ASMaIoP\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\minec\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\caratovchanin\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -4996,7 +4991,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Users\\minec\\AppData\\Roaming\\Cosmos User Kit\\packages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

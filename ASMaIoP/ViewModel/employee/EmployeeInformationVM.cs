@@ -168,13 +168,26 @@ namespace ASMaIoP.ViewModel
 
         DatabaseInterface databaseInterface;
 
-        public void Apply(int RoleId, string NewRoleTitle)
+        public void Apply(int RoleId, string NewRoleTitle, DateTime ragnarok, string reasonForSwap)
         {
+            DocumentHelper helper;
             try
             {
                 if(RoleId != Data.roleId)
                 {
-                    //databaseInterface.HistoryCreate(prof.id.ToString(), Data.EmployeeId.ToString(), Name, DateTime.Now, $"Переведен с должности {Data.roleTitle} на {NewRoleTitle}");
+                    int docId = databaseInterface.DocsCreate(2, DateTime.Now.Date, ragnarok.Date, reasonForSwap, Data.roleTitle) ;
+                    databaseInterface.HistroyCreateNew(DateTime.Now.Date, "Смена должности", docId, prof.id, Data.EmployeeId);
+                    helper = new DocumentHelper(Properties.Resources.Perevod);
+                    helper.Replace("ДАТАП", ragnarok.Date.ToString());
+                    helper.Replace("нРаб", $"{Data.EmployeeId}");
+                    helper.Replace("ИМЯП", $"{surname} {name} {patName}");
+                    helper.Replace("РОЛЬ", $"{Data.roleTitle}");
+                    helper.Replace("ПРИЧИНА", reasonForSwap);
+                    helper.Replace("РОЛЬН", $"{RoleTitle}");
+                    helper.Replace("ДТ", Data.firstDay.Day.ToString());
+                    helper.Replace("МТ", Data.firstDay.Month.ToString());
+                    helper.Replace("ГТ", Data.firstDay.Year.ToString());
+                    helper.Replace("нТруд", $"{Data.EmployeeId}{Data.firstDay.Year}-{Data.firstDay.Day}");
                 }
 
                 databaseInterface.EditEmploy(Data.EmployeeId, Name, Surname, PatName, Address, Phone, RoleId, CardId);

@@ -142,6 +142,9 @@
     <Compile Include="View\ReasonDississed.xaml.cs">
       <DependentUpon>ReasonDississed.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\ReasonForSwap.xaml.cs">
+      <DependentUpon>ReasonForSwap.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\SelectExcucant.xaml.cs">
       <DependentUpon>SelectExcucant.xaml</DependentUpon>
     </Compile>
@@ -159,6 +162,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Auth.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ReasonForSwap.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -281,8 +288,8 @@
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -360,8 +367,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\DismissedEmployee.docx" />
-    <None Include="Resources\TrudDocx.doc" />
+    <None Include="Resources\Perevod.docx" />
     <None Include="Resources\TrudDocx.docx" />
+    <None Include="Resources\Weekend.docx" />
     <None Include="View\Resource\default.png" />
   </ItemGroup>
   <ItemGroup>
