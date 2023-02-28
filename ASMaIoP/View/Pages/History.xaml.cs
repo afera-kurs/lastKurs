@@ -103,7 +103,7 @@ namespace ASMaIoP.View.Pages
                                 }
                             case 3:
                                 {
-                                    DatabaseInterface.FillTableType type = (DatabaseInterface.FillTableType)Convert.ToInt32(item.doc.descFirst);
+                                    DatabaseInterface.FillTableType type = ((DatabaseInterface.FillTableType)Enum.Parse(typeof(DatabaseInterface.FillTableType), item.doc.descFirst, true));
                                     switch(type)
                                     {
                                         case DatabaseInterface.FillTableType.Weekend:

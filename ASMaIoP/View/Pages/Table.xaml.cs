@@ -118,7 +118,11 @@ namespace ASMaIoP.View.Pages
                 
                     Browser.Dispatcher.Invoke(() =>
                     {
-                        Browser.Load($"file://{formater}/tmp.html");
+                        string path = $"file://{formater}/tmp.html";
+
+                        path = path.Replace("#", "%23");
+
+                        Browser.Load(path);
                         loading.Visibility = Visibility.Collapsed;
                         loading.IsEnabled = false;
                     });

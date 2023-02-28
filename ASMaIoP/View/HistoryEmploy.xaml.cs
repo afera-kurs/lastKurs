@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using ASMaIoP.ViewModel;
 using ASMaIoP.Model;
 using System.Threading;
+using Microsoft.Win32;
 
 namespace ASMaIoP.View
 {
@@ -37,7 +38,7 @@ namespace ASMaIoP.View
         {
             if (HistoryDataGrid.SelectedItem != null)
             {
-                var item = (HistoryVM.HistoryRow)HistoryDataGrid.SelectedItem;
+                var item = (ViewModel.HistoryEmployeeVM.HistoryRow)HistoryDataGrid.SelectedItem;
                 if (item.DocsID != null)
                 {
                     loadDocs = new Thread(() =>
@@ -95,7 +96,7 @@ namespace ASMaIoP.View
                                 }
                             case 3:
                                 {
-                                    DatabaseInterface.FillTableType type = (DatabaseInterface.FillTableType)Convert.ToInt32(item.doc.descFirst);
+                                    DatabaseInterface.FillTableType type = ((DatabaseInterface.FillTableType)Enum.Parse(typeof(DatabaseInterface.FillTableType), item.doc.descFirst, true));
                                     switch (type)
                                     {
                                         case DatabaseInterface.FillTableType.Weekend:
@@ -152,7 +153,16 @@ namespace ASMaIoP.View
                                     break;
                                 }
                         }
-                        helper.Save("test.docx");
+                        SaveFileDialog dialog = new SaveFileDialog();
+                        dialog.Filter = "Word Documents|*.docx";
+                        dialog.FilterIndex = 2;
+                        dialog.RestoreDirectory = true;
+                        bool? some = dialog.ShowDialog();
+                        if (some != null && some.Value)
+                        {
+                            helper.Save(dialog.FileName);
+                        }
+
                     });
                     loadDocs.Start();
                 }

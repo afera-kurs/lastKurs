@@ -1369,6 +1369,10 @@ namespace ASMaIoP.Model
 
             switch (type)
             {
+                case FillTableType.WeekendAge:
+                    placeHolder = "О";
+                    historyMessage = $"внесен ежегодный отпуск с {firstDate.ToString()} по {endDateTime.ToString()} по причине {desc}";
+                    break;
                 case FillTableType.Weekend:
                     placeHolder = "О";
                     historyMessage = $"внесен отпуск с {firstDate.ToString()} по {endDateTime.ToString()} по причине {desc}";
