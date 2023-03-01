@@ -90,14 +90,16 @@ namespace ASMaIoP.View.Pages
                                 {
                                     helper = new DocumentHelper(Properties.Resources.Perevod);
                                     helper.Replace("ДАТАП", item.Date);
+                                    helper.Replace("нДок", item.doc.id.ToString());
+                                    helper.Replace("ДАТАC", item.doc.firstDay.ToString());
                                     helper.Replace("нРаб", item.EmployeeID.ToString());
                                     helper.Replace("ИМЯП", item.Name);
                                     helper.Replace("РОЛЬ", item.doc.descSecond);
                                     helper.Replace("ПРИЧИНА", item.doc.descFirst);
                                     helper.Replace("РОЛЬН", item.employee.roleTitle);
-                                    helper.Replace("ДТ", item.doc.firstDay.Day.ToString());
-                                    helper.Replace("МТ", item.doc.firstDay.Month.ToString());
-                                    helper.Replace("ГТ", item.doc.firstDay.Year.ToString());
+                                    helper.Replace("ДТ", DateTime.Parse(item.Date).Day.ToString());
+                                    helper.Replace("МТ", DateTime.Parse(item.Date).Month.ToString());
+                                    helper.Replace("ГТ", DateTime.Parse(item.Date).Year.ToString());
                                     helper.Replace("нТруд", $"{item.employee.id}{item.employee.employeeWordDay.Year}-{item.employee.employeeWordDay.Day}");
                                     break;
                                 }
@@ -129,7 +131,7 @@ namespace ASMaIoP.View.Pages
                                                 helper.Replace("ДБК", item.doc.secondDay.Day.ToString());
                                                 helper.Replace("МБК", item.doc.secondDay.Month.ToString());
                                                 helper.Replace("ГБК", item.doc.secondDay.Year.ToString());
-                                                helper.Replace("БДН", (item.doc.firstDay - item.doc.secondDay).TotalDays.ToString());
+                                                helper.Replace("БДН", (item.doc.secondDay - item.doc.firstDay).TotalDays.ToString());
                                                 break;
                                             }
                                         case DatabaseInterface.FillTableType.WeekendAge:
@@ -146,7 +148,7 @@ namespace ASMaIoP.View.Pages
                                                 helper.Replace("ДАК", item.doc.secondDay.Day.ToString());
                                                 helper.Replace("МАК", item.doc.secondDay.Month.ToString());
                                                 helper.Replace("ГАК", item.doc.secondDay.Year.ToString());
-                                                helper.Replace("АДН", (item.doc.firstDay - item.doc.secondDay).TotalDays.ToString());
+                                                helper.Replace("АДН", (item.doc.secondDay-item.doc.firstDay).TotalDays.ToString());
                                                 helper.Replace("ДБ", "");
                                                 helper.Replace("МБ", "");
                                                 helper.Replace("ГБ", "");

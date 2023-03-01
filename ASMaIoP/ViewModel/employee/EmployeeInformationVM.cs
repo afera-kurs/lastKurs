@@ -147,6 +147,7 @@ namespace ASMaIoP.ViewModel
             Data = data;
             Name = data.name;
             Surname = data.surname;
+            PatName = data.patName;
             Address = data.address;
             Phone = data.phoneNumber;
             RoleTitle = data.roleTitle;
@@ -180,6 +181,8 @@ namespace ASMaIoP.ViewModel
                     helper = new DocumentHelper(Properties.Resources.Perevod);
                     helper.Replace("ДАТАП", ragnarok.Date.ToString());
                     helper.Replace("нРаб", $"{Data.EmployeeId}");
+                    helper.Replace("нДок", docId.ToString());
+                    helper.Replace("ДАТАC", DateTime.Now.Date.ToString());
                     helper.Replace("ИМЯП", $"{surname} {name} {patName}");
                     helper.Replace("РОЛЬ", $"{Data.roleTitle}");
                     helper.Replace("ПРИЧИНА", reasonForSwap);

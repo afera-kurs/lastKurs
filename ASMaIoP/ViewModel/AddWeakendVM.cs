@@ -52,7 +52,7 @@ namespace ASMaIoP.ViewModel
                         helper.Replace("ДБК", end.Day.ToString());
                         helper.Replace("МБК", end.Month.ToString());
                         helper.Replace("ГБК", end.Year.ToString());
-                        helper.Replace("БДН", (first - end).TotalDays.ToString());
+                        helper.Replace("БДН", (end-first).TotalDays.ToString());
                         break;
                     }
                 case DatabaseInterface.FillTableType.WeekendAge:
@@ -71,7 +71,7 @@ namespace ASMaIoP.ViewModel
                         helper.Replace("ДАК", end.Day.ToString());
                         helper.Replace("МАК", first.Month.ToString());
                         helper.Replace("ГАК", first.Year.ToString());
-                        helper.Replace("АДН", (first - end).TotalDays.ToString());
+                        helper.Replace("АДН", (end - first).TotalDays.ToString());
                         helper.Replace("ДБ", "");
                         helper.Replace("МБ", "");
                         helper.Replace("ГБ", "");
